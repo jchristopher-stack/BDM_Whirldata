@@ -1,0 +1,370 @@
+<div id="container" class="app-container cd-page">
+    <!-- ===== Client header ===== -->
+    <header class="cd-header" id="client-header">
+        <nav class="cd-breadcrumb" aria-label="Breadcrumb">
+            <a routerLink="/clients"><i class="pi pi-arrow-left" aria-hidden="true"></i> Clients</a>
+        </nav>
+
+        <div class="cd-header-main">
+            <div class="cd-identity" *ngIf="!clientLoaded" aria-busy="true">
+                <p-skeleton shape="circle" size="3rem"></p-skeleton>
+                <div>
+                    <p-skeleton width="14rem" height="1.75rem"></p-skeleton>
+                    <p-skeleton width="20rem" height="0.875rem" styleClass="mt-2"></p-skeleton>
+                </div>
+            </div>
+            <div class="cd-identity" *ngIf="clientLoaded">
+                <div class="cd-avatar" aria-hidden="true">{{(clientDetails.first_name || '').charAt(0)}}{{(clientDetails.last_name || '').charAt(0)}}</div>
+                <div class="cd-identity-text">
+                    <h1 class="heading-reset cd-name">{{clientDetails.first_name}} {{clientDetails.last_name}}</h1>
+                    <div class="cd-contact">
+                        <span class="cd-contact-item" *ngIf="clientDetails.email_id">
+                            <i class="pi pi-envelope" aria-hidden="true"></i>
+                            <span>{{clientDetails.email_id}}</span>
+                            <button type="button" class="btn-icon cd-copy" (click)="copyContent(clientDetails.email_id)" aria-label="Copy email address" pTooltip="Copy email address" tooltipPosition="top"><i class="pi pi-copy" aria-hidden="true"></i></button>
+                        </span>
+                        <span class="cd-contact-item" *ngIf="clientDetails.phone_number">
+                            <i class="pi pi-phone" aria-hidden="true"></i>
+                            <span>{{clientDetails.phone_number}}</span>
+                            <button type="button" class="btn-icon cd-copy" (click)="copyContent(clientDetails.phone_number)" aria-label="Copy phone number" pTooltip="Copy phone number" tooltipPosition="top"><i class="pi pi-copy" aria-hidden="true"></i></button>
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="cd-actions">
+                <button pButton type="button" class="p-button-outlined" label="New session" icon="pi pi-calendar-plus" (click)="showAddSession()"></button>
+                <button pButton type="button" label="Add activity" icon="pi pi-plus" (click)="showAddActivity()"></button>
+                <button pButton type="button" class="p-button-text p-button-rounded cd-more" icon="pi pi-ellipsis-v" aria-label="More actions" aria-haspopup="menu" (click)="moreMenu.toggle($event)"></button>
+                <p-menu #moreMenu [popup]="true" [model]="moreActions" appendTo="body"></p-menu>
+            </div>
+        </div>
+
+        <dl class="cd-facts" *ngIf="clientLoaded">
+            <div class="cd-fact" *ngIf="clientDetails.enrollment_date && showDate(clientDetails.enrollment_date) != 'Invalid Date'">
+                <dt>Enrolled</dt>
+                <dd>{{showDate(clientDetails.enrollment_date)}}</dd>
+            </div>
+            <div class="cd-fact" *ngIf="clientDetails.last_session && showDate(clientDetails.last_session) != 'Invalid Date'">
+                <dt>Last session</dt>
+                <dd>{{showDate(clientDetails.last_session)}}</dd>
+            </div>
+            <div class="cd-fact" *ngIf="clientDetails.next_session && showDate(clientDetails.next_session) != 'Invalid Date'">
+                <dt>Next session</dt>
+                <dd>
+                    {{showDate(clientDetails.next_session)}}
+                    <button type="button" class="btn-icon cd-edit-dates" (click)="toggleSessionModal()" aria-label="Edit session dates" pTooltip="Edit session dates" tooltipPosition="top"><i class="pi pi-pencil" aria-hidden="true"></i></button>
+                </dd>
+            </div>
+            <div class="cd-fact cd-fact-tags" *ngIf="clientDetails.purpose_of_visit?.length">
+                <dt>Purpose of visit</dt>
+                <dd>
+                    <span class="pov-tag" *ngFor="let pov of clientDetails.purpose_of_visit">{{pov.purpose_of_visit_name}}</span>
+                </dd>
+            </div>
+        </dl>
+
+        <div class="cd-session-alert" role="status" *ngIf="clientLoaded && nextSessionPassed">
+            <i class="pi pi-calendar-times" aria-hidden="true"></i>
+            <p class="cd-session-alert-text">
+                <strong>The next session date ({{showDate(clientDetails.next_session)}}) has passed.</strong>
+                {{clientDetails.first_name}}'s app shows no session booked until you set the next one.
+            </p>
+            <button pButton type="button" class="p-button-sm" label="Set next session" icon="pi pi-calendar-plus" (click)="showAddSession()"></button>
+        </div>
+    </header>
+
+    <div class="cd-body">
+        <!-- ===== Activities / Progress ===== -->
+        <section class="cd-main" aria-label="Activities and progress">
+            <div class="cd-toolbar" *ngIf="sessionList.length">
+                <p-selectButton [options]="viewOptions" optionLabel="label" optionValue="value" [(ngModel)]="currentType" (onChange)="onToggleChange()" ariaLabelledBy="cd-view-label"></p-selectButton>
+                <span id="cd-view-label" class="visually-hidden">View</span>
+                <ng-container *ngIf="currentType == 'Activities'">
+                    <span id="cd-session-label" class="visually-hidden">Session</span>
+                    <p-dropdown [options]="sessionList" optionLabel="name" [ngModel]="currentSession" (onChange)="selectSession($event.value)" placeholder="No session" ariaLabelledBy="cd-session-label" [style]="{width: '12rem'}"></p-dropdown>
+                </ng-container>
+            </div>
+
+            <div class="cd-main-scroll">
+                <app-skeleton variant="cards" [count]="4" *ngIf="!apiDataLoaded"></app-skeleton>
+
+                <!-- Activities for the selected session -->
+                <ng-container *ngIf="currentType == 'Activities' && apiDataLoaded && Object.keys(activityObj).length">
+                    <ng-container *ngFor="let status of ['IN-PROGRESS', 'COMPLETED', 'TO DO']">
+                        <section class="cd-activity-group" *ngIf="activityObj[status]?.length">
+                            <h2 class="heading-reset cd-group-title">
+                                <ng-container *ngIf="status == 'IN-PROGRESS'">In progress</ng-container>
+                                <ng-container *ngIf="status == 'COMPLETED'">Completed</ng-container>
+                                <ng-container *ngIf="status == 'TO DO'">Not started</ng-container>
+                                <span class="cd-group-count">{{activityObj[status].length}}</span>
+                            </h2>
+                            <div class="cd-activity-grid">
+                                <div class="cd-activity-card cd-activity-card-clickable" *ngFor="let activity of activityObj[status]" (click)="showActivityInfo(activity)" role="button" tabindex="0" (keydown.enter)="showActivityInfo(activity)" (keydown.space)="$event.preventDefault(); showActivityInfo(activity)">
+                                    <div class="cd-activity-card-name">{{activity.activity_name}}</div>
+                                    <div class="cd-score-sub" *ngIf="activity.scheduled_days != null">Done {{activity.completed_days}} of {{activity.scheduled_days}} days</div>
+                                    <div class="cd-activity-total">{{(activity.GREAT||0) + (activity.GOOD||0) + (activity.BAD||0)}} entries</div>
+                                    <div class="cd-emoji-row">
+                                        <span class="cd-emoji-count" title="Great"><img src="assets/img/happy.png" alt="Great"> {{activity.GREAT || 0}}</span>
+                                        <span class="cd-emoji-count" title="Did the job"><img src="assets/img/neutral.png" alt="Did the job"> {{activity.GOOD || 0}}</span>
+                                        <span class="cd-emoji-count" title="Didn't feel good"><img src="assets/img/sad.png" alt="Didn't feel good"> {{activity.BAD || 0}}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+                    </ng-container>
+
+                    <section class="cd-activity-group" *ngIf="activityObj['PHQ9_GAD7']?.length">
+                        <h2 class="heading-reset cd-group-title">PHQ-9 and GAD-7 <span class="cd-group-count">{{activityObj['PHQ9_GAD7'].length}}</span></h2>
+                        <div class="cd-activity-grid">
+                            <div class="cd-activity-card cd-score-card" *ngFor="let activity of activityObj['PHQ9_GAD7']">
+                                <div class="cd-activity-card-name">
+                                    <ng-container *ngIf="activity.activity_type_id==2">PHQ-9</ng-container>
+                                    <ng-container *ngIf="activity.activity_type_id==3">GAD-7</ng-container>
+                                </div>
+                                <div class="cd-score-value" *ngIf="questionnaireScore(activity) != null">{{questionnaireScore(activity)}}</div>
+                                <div class="cd-score-sub" *ngIf="questionnaireScore(activity) == null">Not answered yet</div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="cd-activity-group" *ngIf="activityObj['STRUCTURED']?.length">
+                        <h2 class="heading-reset cd-group-title">Structured activities <span class="cd-group-count">{{activityObj['STRUCTURED'].length}}</span></h2>
+                        <div class="cd-activity-grid">
+                            <div class="cd-activity-card cd-activity-card-clickable" *ngFor="let activity of activityObj['STRUCTURED']" (click)="viewStructuredActivity(activity)" role="button" tabindex="0" (keydown.enter)="viewStructuredActivity(activity)" (keydown.space)="$event.preventDefault(); viewStructuredActivity(activity)">
+                                <div class="cd-activity-card-name">{{activity.activity_name}}</div>
+                                <div class="cd-score-sub">{{getActivityType(activity.activity_type_id)}}</div>
+                                <div class="cd-score-sub" *ngIf="activity.scheduled_days != null">Done {{activity.completed_days}} of {{activity.scheduled_days}} days</div>
+                            </div>
+                        </div>
+                    </section>
+                </ng-container>
+
+                <!-- This session has no activities -->
+                <div class="cd-empty" *ngIf="currentType == 'Activities' && apiDataLoaded && sessionList.length && !Object.keys(activityObj).length">
+                    <img class="cd-empty-art" src="assets/img/add-client.svg" alt="">
+                    <h2 class="heading-reset cd-empty-title">No activities in this session</h2>
+                    <p class="cd-empty-text">Add an activity for {{clientDetails.first_name}} to work on before the next session. Progress still shows earlier sessions.</p>
+                    <button pButton type="button" label="Add activity" icon="pi pi-plus" (click)="showAddActivity()"></button>
+                </div>
+
+                <!-- No sessions at all yet -->
+                <div class="cd-empty" *ngIf="apiDataLoaded && !sessionList.length">
+                    <img class="cd-empty-art" src="assets/img/add-client.svg" alt="">
+                    <h2 class="heading-reset cd-empty-title">No sessions yet</h2>
+                    <p class="cd-empty-text">Start a session to set its dates and give {{clientDetails.first_name}} activities.</p>
+                    <button pButton type="button" label="New session" icon="pi pi-calendar-plus" (click)="showAddSession()"></button>
+                </div>
+
+                <!-- Progress across sessions -->
+                <ng-container *ngIf="currentType == 'Progress' && apiDataLoaded">
+                    <section class="cd-chart-card" aria-labelledby="cd-ratings-title">
+                        <div class="cd-chart-head">
+                            <div>
+                                <h2 class="heading-reset cd-chart-title" id="cd-ratings-title">Activity ratings</h2>
+                                <p class="cd-chart-hint">How {{clientDetails.first_name}} rated every standard activity, per session.</p>
+                            </div>
+                            <ul class="cd-legend">
+                                <li><span class="cd-legend-dot great-bg"></span>Great</li>
+                                <li><span class="cd-legend-dot good-bg"></span>Did the job</li>
+                                <li><span class="cd-legend-dot bad-bg"></span>Didn't feel good</li>
+                            </ul>
+                        </div>
+                        <div class="cd-chart" *ngIf="hasEnoughTrendData(lineChartData)">
+                            <ngx-charts-line-chart [customColors]="lineChartColor" [curve]="curve" [results]="lineChartData" [legend]="false" [showXAxisLabel]="true" [showYAxisLabel]="true" [xAxis]="true" [yAxis]="true"
+                                [gradient]="false" [animations]="false" [roundDomains]="true">
+                            </ngx-charts-line-chart>
+                        </div>
+                        <div class="cd-chart-empty" *ngIf="!hasEnoughTrendData(lineChartData)">
+                            <p>A trend needs at least 2 sessions of ratings.</p>
+                            <div class="cd-emoji-row" *ngIf="lineChartData[0]?.series?.length == 1">
+                                <span class="cd-emoji-count" title="Great"><img src="assets/img/happy.png" alt="Great"> {{lineChartData[0].series[0].value}}</span>
+                                <span class="cd-emoji-count" title="Did the job"><img src="assets/img/neutral.png" alt="Did the job"> {{lineChartData[1].series[0].value}}</span>
+                                <span class="cd-emoji-count" title="Didn't feel good"><img src="assets/img/sad.png" alt="Didn't feel good"> {{lineChartData[2].series[0].value}}</span>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="cd-chart-card" aria-labelledby="cd-scores-title">
+                        <div class="cd-chart-head">
+                            <div>
+                                <h2 class="heading-reset cd-chart-title" id="cd-scores-title">PHQ-9 and GAD-7 scores</h2>
+                                <p class="cd-chart-hint">Higher scores mean more severe symptoms.</p>
+                            </div>
+                            <ul class="cd-legend">
+                                <li><span class="cd-legend-line cd-legend-phq"></span>PHQ-9</li>
+                                <li><span class="cd-legend-line cd-legend-gad"></span>GAD-7</li>
+                            </ul>
+                        </div>
+                        <div class="cd-chart" *ngIf="hasEnoughTrendData(phqLineChart)">
+                            <ngx-charts-line-chart [customColors]="phqLineChartColor" [curve]="curve" [results]="phqLineChart" [legend]="false" [showXAxisLabel]="true" [showYAxisLabel]="true" [xAxis]="true" [yAxis]="true" [gradient]="false" [animations]="false"
+                                [roundDomains]="true">
+                            </ngx-charts-line-chart>
+                        </div>
+                        <div class="cd-chart-empty" *ngIf="!hasEnoughTrendData(phqLineChart)">
+                            <p>A trend needs at least 2 sessions with PHQ-9 and GAD-7 scores.</p>
+                            <p *ngIf="phqLineChart[0]?.series?.length == 1">This session: PHQ-9 <b>{{phqLineChart[0].series[0].value}}</b> · GAD-7 <b>{{phqLineChart[1].series[0].value}}</b></p>
+                        </div>
+                    </section>
+
+                    <section class="cd-chart-card" *ngIf="cognitiveExerciseProgress" aria-labelledby="cd-cognitive-title">
+                        <div class="cd-chart-head">
+                            <div>
+                                <h2 class="heading-reset cd-chart-title" id="cd-cognitive-title">Cognitive exercise progress</h2>
+                                <p class="cd-chart-hint">Feeling intensity before and after each completed exercise.</p>
+                            </div>
+                        </div>
+                        <div class="cd-trend-stat-row">
+                            <div class="cd-trend-stat">
+                                <div class="cd-trend-stat-num">{{cognitiveExerciseProgress.completed_count}}</div>
+                                <div class="cd-trend-stat-lbl">Completed</div>
+                            </div>
+                            <div class="cd-trend-stat">
+                                <div class="cd-trend-stat-num cd-trend-good">−{{cognitiveExerciseProgress.average_drop}} pts</div>
+                                <div class="cd-trend-stat-lbl">Average drop in intensity</div>
+                            </div>
+                            <div class="cd-trend-stat">
+                                <div class="cd-trend-stat-num cd-trend-good">{{cognitiveExerciseProgress.best_drop}} pts</div>
+                                <div class="cd-trend-stat-lbl">Biggest single drop</div>
+                            </div>
+                        </div>
+                        <div class="cd-trend-chart">
+                            <div class="cd-trend-point" *ngFor="let point of cognitiveExerciseProgress.points">
+                                <div class="cd-trend-bars">
+                                    <div class="cd-trend-bar cd-trend-bar-before" [style.height.px]="trendBarHeight(point.intensity_before)">
+                                        <span class="cd-trend-bar-value">{{point.intensity_before}}</span>
+                                    </div>
+                                    <div class="cd-trend-bar cd-trend-bar-after" [style.height.px]="trendBarHeight(point.intensity_after)">
+                                        <span class="cd-trend-bar-value">{{point.intensity_after}}</span>
+                                    </div>
+                                </div>
+                                <div class="cd-trend-point-date">{{formatTrendDate(point.timestamp)}}</div>
+                            </div>
+                        </div>
+                        <ul class="cd-legend cd-trend-legend">
+                            <li><span class="cd-legend-dot cd-trend-bar-before"></span>Intensity before</li>
+                            <li><span class="cd-legend-dot cd-trend-bar-after"></span>Intensity after</li>
+                        </ul>
+                    </section>
+                </ng-container>
+            </div>
+        </section>
+
+        <!-- ===== Messages / Comments ===== -->
+        <aside class="cd-side" aria-label="Messages and comments">
+            <div class="cd-side-head">
+                <span id="cd-panel-label" class="visually-hidden">Panel</span>
+                <p-selectButton [options]="panelOptions" optionLabel="label" optionValue="value" [(ngModel)]="sidePanel" (onChange)="onPanelChange()" ariaLabelledBy="cd-panel-label"></p-selectButton>
+            </div>
+
+            <!-- Messages -->
+            <ng-container *ngIf="sidePanel == 'Messages'">
+                <div class="cd-chat-status" *ngIf="clientLoaded">
+                    <div class="cd-chat-switch">
+                        <p-inputSwitch inputId="cd-chat-toggle" [(ngModel)]="clientDetails.is_chat_active" (onChange)="setChatStatus()"></p-inputSwitch>
+                        <label for="cd-chat-toggle">Chat {{clientDetails.is_chat_active ? 'on' : 'off'}}</label>
+                    </div>
+                    <button type="button" class="btn-icon" (click)="getMessages()" *ngIf="clientDetails.is_chat_active" aria-label="Refresh messages" pTooltip="Refresh messages" tooltipPosition="left"><i class="pi pi-refresh" aria-hidden="true"></i></button>
+                </div>
+
+                <div class="cd-chat" #chat aria-live="polite">
+                    <app-skeleton variant="lines" [count]="5" *ngIf="!messagesLoaded || !clientLoaded"></app-skeleton>
+                    <div class="cd-side-empty" *ngIf="messagesLoaded && clientLoaded && !Object.keys(messageObj).length">
+                        <img src="assets/img/no_message.png" alt="">
+                        <p *ngIf="clientDetails.is_chat_active">No messages yet. Say hello to {{clientDetails.first_name}}.</p>
+                        <p *ngIf="!clientDetails.is_chat_active">Chat is off for {{clientDetails.first_name}}. Turn it on to message them in the TAAP app.</p>
+                        <button pButton type="button" class="p-button-outlined" label="Turn on chat" *ngIf="!clientDetails.is_chat_active" (click)="clientDetails.is_chat_active = true; setChatStatus()"></button>
+                    </div>
+                    <ng-container *ngFor="let date of Object.keys(messageObj)">
+                        <div class="cd-chat-day"><span>{{date}}</span></div>
+                        <div class="cd-message" *ngFor="let message of messageObj[date]" [class.cd-message-mine]="message.role == 'THERAPIST'">
+                            <div class="cd-bubble">{{message.message_text}}</div>
+                            <div class="cd-message-time">{{message.time}}</div>
+                        </div>
+                    </ng-container>
+                </div>
+
+                <div class="cd-composer" *ngIf="clientDetails.is_chat_active">
+                    <label for="cd-message-input" class="visually-hidden">Message to {{clientDetails.first_name}}</label>
+                    <input id="cd-message-input" type="text" pInputText [(ngModel)]="sendMessageTxt" (keydown.enter)="sendMessage()" [placeholder]="'Message ' + (clientDetails.first_name || '')" autocomplete="off">
+                    <button pButton type="button" [icon]="sendStatus ? 'pi pi-spin pi-spinner' : 'pi pi-send'" aria-label="Send message" [disabled]="sendStatus || !sendMessageTxt.trim()" (click)="sendMessage()"></button>
+                </div>
+            </ng-container>
+
+            <!-- Comments on activities -->
+            <ng-container *ngIf="sidePanel == 'Comments'">
+                <div class="cd-comments-tools">
+                    <span id="cd-comment-session-label" class="visually-hidden">Session</span>
+                    <p-dropdown class="cd-comment-session" [options]="sessionList" optionLabel="name" [ngModel]="commentSelectedSession" (onChange)="selectCommentSession($event.value)" placeholder="No session" ariaLabelledBy="cd-comment-session-label" [style]="{width: '100%'}"></p-dropdown>
+                    <button pButton type="button" class="p-button-text p-button-sm cd-comment-sort"
+                        [icon]="isDescending ? 'pi pi-sort-amount-down' : 'pi pi-sort-amount-up-alt'"
+                        [label]="isDescending ? 'Newest first' : 'Oldest first'"
+                        [attr.aria-label]="'Sorted ' + (isDescending ? 'newest' : 'oldest') + ' first. Change the order'"
+                        (click)="toggleCommentSort()"></button>
+                </div>
+                <span id="cd-mood-label" class="visually-hidden">Show comments rated</span>
+                <p-selectButton class="cd-mood-filter" [options]="moodOptions" optionLabel="label" optionValue="value" [(ngModel)]="progressSelectedImg" ariaLabelledBy="cd-mood-label">
+                    <ng-template let-item>
+                        <img [src]="item.icon" alt="">
+                        <span>{{item.label}}</span>
+                        <span class="cd-mood-count" *ngIf="commentsLoaded">{{moodCount(item.value)}}</span>
+                    </ng-template>
+                </p-selectButton>
+
+                <div class="cd-comments">
+                    <app-skeleton variant="lines" [count]="4" *ngIf="!commentsLoaded"></app-skeleton>
+                    <ng-container *ngIf="commentsLoaded">
+                        <ng-container *ngFor="let date of Object.keys(progressComments)">
+                            <ng-container *ngFor="let content of progressComments[date] | customFilter:progressSelectedImg:'feedback_tag_name'; let i = index">
+                                <div class="cd-chat-day" *ngIf="i == 0"><span>{{date}}</span></div>
+                                <article class="cd-comment">
+                                    <p>{{content.activity_feedback_text}}</p>
+                                    <div class="cd-message-time">{{content.time_val}}</div>
+                                </article>
+                            </ng-container>
+                        </ng-container>
+                        <p class="cd-side-empty-text" *ngIf="!Object.keys(progressComments).length">No comments for this session yet.</p>
+                        <p class="cd-side-empty-text" *ngIf="Object.keys(progressComments).length && !moodCount(progressSelectedImg)">No comments rated “{{moodLabel(progressSelectedImg)}}” in this session.</p>
+                    </ng-container>
+                </div>
+            </ng-container>
+        </aside>
+    </div>
+</div>
+
+<app-confirm-dialog [(visible)]="showDeleteDialog" header="Delete client" confirmLabel="Delete client" [danger]="true" (confirm)="deleteClient()">
+    Delete the client <span class="text-capitalize">{{clientDetails.first_name}} {{clientDetails.last_name}}</span>?
+</app-confirm-dialog>
+
+<p-dialog header="Edit session dates" [(visible)]="showSessionDialog" [modal]="true" [draggable]="false" [resizable]="false" [style]="{width: '32rem'}" [breakpoints]="{'640px': '92vw'}">
+    <div class="cd-session-form">
+        <div class="cd-session-field">
+            <label class="field-label" for="cd-session-current">Current session</label>
+            <p-calendar inputId="cd-session-current" [(ngModel)]="sessionStartDate" dateFormat="dd/mm/yy" [showIcon]="true" [readonlyInput]="true" appendTo="body" placeholder="DD/MM/YYYY"></p-calendar>
+        </div>
+        <div class="cd-session-field">
+            <label class="field-label" for="cd-session-next">Next session</label>
+            <p-calendar inputId="cd-session-next" [(ngModel)]="sessionEndDate" [minDate]="sessionStartDate" dateFormat="dd/mm/yy" [showIcon]="true" [readonlyInput]="true" appendTo="body" placeholder="DD/MM/YYYY"></p-calendar>
+        </div>
+    </div>
+    <ng-template pTemplate="footer">
+        <button pButton type="button" class="p-button-text" label="Cancel" (click)="toggleSessionModal()"></button>
+        <button pButton type="button" label="Save" (click)="updateSession()"></button>
+    </ng-template>
+</p-dialog>
+
+<p-dialog header="{{selectedStructuredActivity?.activity_name}}" [(visible)]="showStructuredModal" [modal]="true" [style]="{width: '30rem'}" [breakpoints]="{'640px': '92vw'}" [dismissableMask]="true">
+    <div class="cd-structured-modal-subtitle" *ngIf="selectedStructuredActivity">{{getActivityType(selectedStructuredActivity.activity_type_id)}}</div>
+    <div class="cd-structured-count" *ngIf="structuredResponses.length > 1">{{structuredResponses.length}} responses, newest first</div>
+    <section class="cd-structured-response" *ngFor="let response of structuredResponses">
+        <h3 class="heading-reset cd-structured-when" *ngIf="response.when">{{response.when}}</h3>
+        <div class="cd-structured-row" *ngFor="let row of response.rows">
+            <div class="cd-structured-row-label">{{row.label}}</div>
+            <div class="cd-structured-row-value">{{row.value}}</div>
+        </div>
+    </section>
+    <div class="cd-structured-row-empty" *ngIf="!structuredResponses.length">No response recorded yet.</div>
+    <ng-template pTemplate="footer">
+        <button pButton pRipple type="button" label="Close" class="p-button-outlined" (click)="showStructuredModal = false"></button>
+    </ng-template>
+</p-dialog>

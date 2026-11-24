@@ -1,0 +1,76 @@
+<nav class="side-nav" aria-label="Main">
+    <a class="side-nav-logo" routerLink="/settings" aria-label="Clinic logo. Open settings"
+        pTooltip="Your clinic's logo. Clients see it in the mobile app. Change it in Settings." tooltipPosition="right">
+        <img [src]="serviceManager.therapistLogo" alt="" />
+    </a>
+    <ul class="side-nav-list">
+        <li>
+            <a class="side-nav-item" routerLink="/clients" [class.is-active]="isActive(clientRoutes)" [attr.aria-current]="isActive(clientRoutes) ? 'page' : null">
+                <i class="pi pi-home" aria-hidden="true"></i>
+                <span class="side-nav-label">Clients</span>
+            </a>
+        </li>
+        <li>
+            <button type="button" class="side-nav-item" [class.is-active]="isActive(['/notifications'])"
+                aria-haspopup="dialog" [attr.aria-expanded]="notificationsPanel.overlayVisible" (click)="notificationsPanel.toggle($event)">
+                <i class="pi pi-bell" aria-hidden="true"></i>
+                <span class="side-nav-label">Notifications</span>
+                <span class="notification-count" *ngIf="therapistHomeService.inactiveClients.length">
+                    {{therapistHomeService.inactiveClients.length}}<span class="visually-hidden"> clients awaiting activation</span>
+                </span>
+            </button>
+        </li>
+        <li>
+            <a class="side-nav-item" routerLink="/settings" [class.is-active]="isActive(['/settings'])" [attr.aria-current]="isActive(['/settings']) ? 'page' : null">
+                <i class="pi pi-cog" aria-hidden="true"></i>
+                <span class="side-nav-label">Settings</span>
+            </a>
+        </li>
+    </ul>
+    <button type="button" tw-select="logout" class="side-nav-item side-nav-logout" (click)="toggleLogoutModal()">
+        <i class="pi pi-sign-out" aria-hidden="true"></i>
+        <span class="side-nav-label">Log out</span>
+    </button>
+</nav>
+
+<p-overlayPanel #notificationsPanel [style]="{width: '320px'}">
+    <button type="button" class="btn-reset notification-row" (click)="toggleNotification()" [attr.aria-expanded]="expandedNotification" *ngIf="therapistHomeService.inactiveClients.length">
+        <i class="pi pi-user-plus notification-item-icon" aria-hidden="true"></i>
+        <span class="notification-item-text">
+            <span class="notification-item-title">{{therapistHomeService.inactiveClients.length}} client(s) awaiting activation</span>
+        </span>
+        <i class="pi" [ngClass]="expandedNotification ? 'pi-chevron-up' : 'pi-chevron-down'" aria-hidden="true"></i>
+    </button>
+    <div class="notification-detail" *ngIf="expandedNotification">
+        <!-- Shown for one client too: the reminder button used to live only in the select-all row. -->
+        <div class="notification-select-all">
+            <label class="notification-check-all" *ngIf="therapistHomeService.inactiveClients.length > 1">
+                <input type="checkbox" class="notification-checkbox" [checked]="therapistHomeService.isSelectAll" [indeterminate]="therapistHomeService.checkSelectExist()"
+                    (change)="therapistHomeService.setSelectAll($any($event.target).checked)">
+                <span>Select all</span>
+            </label>
+            <button pButton type="button" class="p-button-outlined p-button-sm notification-remind" icon="pi pi-send"
+                [label]="selectedCount ? 'Send reminder (' + selectedCount + ')' : 'Send reminder'" [disabled]="!selectedCount" (click)="therapistHomeService.clientsRemainder()"></button>
+        </div>
+        <div class="inactive-card" *ngFor="let client of therapistHomeService.inactiveClients">
+            <div class="inactive-card-head">
+                <input type="checkbox" class="notification-checkbox" [(ngModel)]="client.checked" (ngModelChange)="therapistHomeService.updateSelectAll()"
+                    [attr.aria-label]="'Select ' + client.first_name + ' ' + client.last_name">
+                <button type="button" class="btn-reset client-name-col" (click)="goToClientDetails(client.client_id); notificationsPanel.hide()">
+                    <span class="client-name">{{client.first_name}} {{client.last_name}}</span>
+                    <span class="client-city">{{client.city}}</span>
+                </button>
+            </div>
+            <div class="expired-row" *ngIf="therapistHomeService.isExpired(client.added_time)">
+                <span>Activation code has expired.</span>
+                <button pButton pRipple type="button" label="Regenerate" class="p-button-sm" (click)="therapistHomeService.regenerateActivationCode(client)"></button>
+            </div>
+        </div>
+    </div>
+    <div class="empty-state" *ngIf="!therapistHomeService.inactiveClients.length">No clients awaiting activation.</div>
+    <a class="notification-view-all" routerLink="/notifications" (click)="notificationsPanel.hide()">View all notifications <i class="pi pi-arrow-right" aria-hidden="true"></i></a>
+</p-overlayPanel>
+
+<app-confirm-dialog [(visible)]="showLogoutDialog" header="Log out" confirmLabel="Log out" (confirm)="serviceManager.logoutTherapist()">
+    You'll need to sign in again to see your clients.
+</app-confirm-dialog>

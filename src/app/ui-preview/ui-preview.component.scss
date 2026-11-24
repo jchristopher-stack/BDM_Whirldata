@@ -1,0 +1,2242 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+  background: #F3FAF6;
+}
+
+.preview-page {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  font-family: var(--font-family, 'Inter', sans-serif);
+}
+
+.preview-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 24px;
+  background: #ffffff;
+  border-bottom: 1px solid #dfe7e4;
+  flex-wrap: wrap;
+}
+
+.preview-title {
+  font-weight: 800;
+  font-size: 15px;
+  margin-right: 10px;
+}
+
+.preview-subtitle {
+  font-size: 12.5px;
+  color: #6b7876;
+}
+
+.preview-toolbar-right {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.theme-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: #6b7876;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+}
+
+.theme-swatches {
+  display: flex;
+  gap: 8px;
+}
+
+.swatch {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  box-shadow: 0 0 0 1px #d7e2e0;
+  cursor: pointer;
+  padding: 0;
+}
+
+.swatch.active {
+  box-shadow: 0 0 0 2px #123328;
+}
+
+.back-link {
+  font-size: 12.5px;
+  color: #3F7D91;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.preview-shell {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
+
+.rail {
+  width: 76px;
+  flex-shrink: 0;
+  /* The real app's actual .side-bar rule (styles.scss) is a flat var(--primary-color) - no
+     gradient at all. The .header-bg gradient is a different element entirely (page headers
+     like Client Details' top banner) - applying it here was based on a wrong assumption. */
+  background: var(--primary-color, #3F7D91);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 22px 0;
+}
+
+.rail-top {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+}
+
+.logo-dot {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: #ffffff;
+  color: var(--primary-color, #3F7D91);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 800;
+  cursor: pointer;
+  overflow: hidden;
+
+  img {
+    width: 70%;
+    height: 70%;
+    object-fit: contain;
+  }
+}
+
+.rail-icon {
+  font-size: 19px;
+  color: rgba(255, 255, 255, .75);
+  cursor: pointer;
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.rail-icon.active,
+.rail-icon:hover {
+  color: var(--primary-color, #3F7D91);
+  background: #ffffff;
+}
+
+.content {
+  flex: 1;
+  min-height: 0;
+  padding: 20px 32px;
+  overflow: hidden;
+}
+
+.clients-page {
+  height: 100%;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.search-box input {
+  width: 320px;
+}
+
+/* ===== Top bar: stat strip + search + Add Client, all in one row ===== */
+.top-bar {
+  display: flex;
+  align-items: stretch;
+  gap: 16px;
+  margin-bottom: 20px;
+  flex-shrink: 0;
+}
+
+.top-bar-search {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+
+  input {
+    height: 100%;
+    width: 240px;
+  }
+}
+
+.top-bar-add {
+  flex-shrink: 0;
+  height: auto;
+}
+
+.toolbar-right-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.col-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.col-head-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  .pi {
+    cursor: pointer;
+    color: #5a8c76;
+    font-size: 16px;
+  }
+}
+
+/* Each card is 3 stacked rows: (avatar+name+session), (tags), (clinical scores+signals) -
+   rather than one crowded line, since the middle column no longer spans the full page width. */
+.client-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 14px 16px;
+  margin-bottom: 10px;
+  box-shadow: 0 1px 3px rgba(20, 50, 40, .08);
+  cursor: pointer;
+  transition: box-shadow .15s ease;
+
+  &:hover {
+    box-shadow: 0 4px 12px rgba(20, 50, 40, .12);
+  }
+}
+
+.client-card-row1 {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.review-now-btn {
+  flex-shrink: 0;
+  margin-left: 4px;
+}
+
+.client-card-row3 {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.client-avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: var(--primary-color, #3F7D91);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 13px;
+  flex-shrink: 0;
+}
+
+.client-name-col {
+  min-width: 130px;
+  flex: 1;
+}
+
+.client-name {
+  font-size: 14.5px;
+  font-weight: 700;
+  color: #123328;
+}
+
+.client-city {
+  font-size: 12.5px;
+  color: #6b7876;
+}
+
+.client-tags {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+/* Clinical status: PHQ-9/GAD-7 latest scores, using the same 3-tier severity
+   colors as task urgency so a therapist reads one consistent color language. */
+.clinical-scores {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.score-badge {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 6px;
+  white-space: nowrap;
+
+  &.tier-good { background: #EAF6EF; color: #2F8F5B; }
+  &.tier-monitor { background: #FBF3E3; color: #8A5A10; }
+  &.tier-attention { background: #FBEAE7; color: #B23A2E; }
+}
+
+.client-scores {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+/* The narrow "Active Clients" side column has no room for avatar + name + signals +
+   scores + session all in one row without clipping the session date - drop the scores
+   there and keep them in the wider roster/alert cards instead. */
+.page-active-col .client-scores {
+  display: none;
+}
+
+.client-session {
+  text-align: right;
+  font-size: 12.5px;
+  color: #5a8c76;
+  white-space: nowrap;
+  flex-shrink: 0;
+
+  b {
+    color: #123328;
+  }
+}
+
+.empty-state {
+  color: #6b7876;
+  font-size: 13.5px;
+  padding: 20px 0;
+}
+
+/* ===== Layout switcher (Enhanced List / Stat Dashboard / Priority Triage) ===== */
+.layout-switcher {
+  display: flex;
+  gap: 2px;
+  background: #eef1f0;
+  border-radius: 8px;
+  padding: 3px;
+}
+
+.layout-btn {
+  border: 0;
+  background: transparent;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  color: #5b6764;
+  padding: 6px 11px;
+  border-radius: 6px;
+  cursor: pointer;
+  white-space: nowrap;
+
+  &.active {
+    background: #ffffff;
+    color: #123328;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, .1);
+  }
+}
+
+/* ===== Per-client signal badges: pending/overdue count, mood trend, last activity ===== */
+/* Semantic status colors are deliberately distinct from the brand teal/coral accent. */
+.client-signals {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+  margin-left: auto;
+  flex-wrap: wrap;
+}
+
+.signal-badge {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 9px;
+  border-radius: 20px;
+  white-space: nowrap;
+
+  &.overdue {
+    background: #FBEAE7;
+    color: #B23A2E;
+    cursor: pointer;
+  }
+
+  &.pending {
+    background: #FBF3E3;
+    color: #8A5A10;
+  }
+}
+
+.mood-trend {
+  font-size: 12px;
+
+  &.mood-up { color: #2F8F5B; }
+  &.mood-down { color: #B23A2E; }
+  &.mood-flat { color: #8A8F8D; }
+}
+
+.last-activity {
+  font-size: 11px;
+  color: #8a9490;
+}
+
+.client-card.severity-attention {
+  background: #FDF6F5;
+}
+
+/* ===== Stat Dashboard layout ===== */
+.stat-tiles {
+  flex: 1;
+  min-width: 0;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+}
+
+.stat-tile {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 16px 18px;
+  box-shadow: 0 1px 3px rgba(20, 50, 40, .08);
+}
+
+.stat-value {
+  font-size: 26px;
+  font-weight: 800;
+  color: #123328;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.1;
+}
+
+.stat-label {
+  font-size: 11.5px;
+  color: #6b7876;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  margin-top: 4px;
+}
+
+.stat-tile-attention .stat-value {
+  color: #B23A2E;
+}
+
+.attention-title {
+  color: #B23A2E;
+}
+
+/* ===== Priority Triage layout ===== */
+.triage-section {
+  margin-bottom: 22px;
+}
+
+.triage-eyebrow {
+  font-size: 11.5px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  margin-bottom: 10px;
+
+  &.attention { color: #B23A2E; }
+  &.monitor { color: #8A5A10; }
+  &.good { color: #2F8F5B; }
+}
+
+.inactive-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.inactive-card {
+  background: #ffffff;
+  border-radius: 10px;
+  padding: 12px 14px;
+  margin-bottom: 10px;
+}
+
+.inactive-card-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.expired-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px dashed #dbe8e0;
+  font-size: 12px;
+  color: #c0392b;
+}
+
+.section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.section-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #123328;
+}
+
+.field-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px 20px;
+  max-width: 780px;
+}
+
+
+.field label {
+  display: block;
+  font-size: 11.5px;
+  font-weight: 700;
+  color: #5a8c76;
+  text-transform: uppercase;
+  letter-spacing: .03em;
+  margin-bottom: 4px;
+}
+
+.field input,
+.field .p-calendar,
+.field .p-dropdown,
+.field .p-autocomplete {
+  width: 100%;
+}
+
+.chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.logo-upload {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 10px 0 12px;
+}
+
+.logo-circle {
+  position: relative;
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  background: #ffffff;
+  border: 3px solid #DFF5E9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.logo-circle img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.logo-circle .pi-building {
+  font-size: 26px;
+  color: #4f8570;
+}
+
+.cam-badge {
+  position: absolute !important;
+  bottom: -2px;
+  right: -2px;
+  width: 26px !important;
+  height: 26px !important;
+}
+
+.logo-title {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #123328;
+}
+
+.logo-sub {
+  font-size: 12px;
+  color: #5a8c76;
+  max-width: 320px;
+  margin-top: 2px;
+}
+
+.hidden-input {
+  display: none;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 28px;
+  max-width: 780px;
+}
+
+.narrow {
+  max-width: 420px;
+}
+
+.delete-sub {
+  font-size: 13px;
+  color: #6b7876;
+  margin-top: 4px;
+}
+
+.delete-q {
+  font-size: 13.5px;
+  color: #123328;
+}
+
+.reason-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.reason-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13.5px;
+}
+
+.delete-cta {
+  text-align: right;
+  color: #FB513B;
+  font-weight: 700;
+  font-size: 13.5px;
+  margin-top: 16px;
+  cursor: pointer;
+}
+
+// PrimeNG's SelectButton renders with ViewEncapsulation.None, so ::ng-deep is needed to reach its buttons.
+// Matches the real app's mat-button-toggle-group: one shared border around the whole group (not a
+// border per button), buttons sit borderless inside it, thin dividers between segments.
+:host ::ng-deep .p-selectbutton {
+  $switch-radius: 10px;
+
+  border: 1px solid var(--primary-color, #3F7D91);
+  border-radius: $switch-radius;
+  overflow: hidden;
+  display: inline-flex;
+
+  .p-button {
+    border: none;
+    border-radius: 0;
+  }
+
+  .p-button:not(:last-child) {
+    border-right: 1px solid rgba(63, 125, 145, .25);
+  }
+
+  .p-button:first-of-type {
+    border-top-left-radius: $switch-radius - 1px;
+    border-bottom-left-radius: $switch-radius - 1px;
+  }
+
+  .p-button:last-of-type {
+    border-top-right-radius: $switch-radius - 1px;
+    border-bottom-right-radius: $switch-radius - 1px;
+  }
+}
+
+:host ::ng-deep .p-selectbutton .p-button.p-highlight {
+  background: var(--primary-color, #3F7D91) !important;
+  color: #ffffff !important;
+}
+
+/* Matches the real app's .main-btn/.light-btn/.main-outline-btn/.light-outline-btn, which are
+   all fully pill-shaped (border-radius: 50px) - PrimeNG's default theme radius is much smaller.
+   Lower specificity than the select-button segment override above, so that group stays flat-
+   sided as intended; modifier classes like .p-button-rounded (already circular) also still win. */
+:host ::ng-deep .p-button {
+  border-radius: 50px;
+}
+
+/* ===== Hover cards: client-at-a-glance, and the overdue-activity glimpse ===== */
+.hover-card {
+  padding: 2px;
+}
+
+.hover-card-title {
+  font-size: 14.5px;
+  font-weight: 700;
+  color: #123328;
+
+  &.attention-title {
+    color: #B23A2E;
+  }
+}
+
+.hover-card-sub {
+  font-size: 12px;
+  color: #6b7876;
+  margin-top: 2px;
+}
+
+.hover-card-meta {
+  font-size: 11.5px;
+  color: #8a9490;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid #eef1f0;
+}
+
+.overdue-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 0;
+
+  & + .overdue-item {
+    border-top: 1px solid #f3ece9;
+  }
+}
+
+.overdue-item-name {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #123328;
+}
+
+.overdue-item-days {
+  font-size: 11px;
+  color: #B23A2E;
+  margin-top: 1px;
+}
+
+/* ===== Page sections: Today's Schedule, Safety Alerts, Admin & Compliance ===== */
+.page-section {
+  margin-bottom: 28px;
+}
+
+/* ===== Two-column structure: top bar (stat strip + search + Add Client), then Alerts and
+   Active Clients side by side. Each column scrolls independently within the available
+   viewport height so the page itself never needs to scroll. ===== */
+.page-columns {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+  gap: 20px;
+}
+
+.page-main-col,
+.page-active-col {
+  min-width: 0;
+  height: 100%;
+  overflow-y: auto;
+  padding-right: 6px;
+}
+
+.page-active-col {
+  /* The real app's second/right panel on a two-panel screen uses .highlight-bg (#FDF5DE) -
+     matched here rather than plain white, e.g. Client Details' Interactions panel. */
+  background: #FDF5DE;
+  border-radius: 14px;
+  padding: 18px;
+  padding-right: 12px;
+  box-shadow: 0 1px 3px rgba(20, 50, 40, .08);
+}
+
+/* ===== Notification bell (replaces the old persistent Admin & Compliance section) ===== */
+.notification-bell {
+  position: relative;
+}
+
+.notification-count {
+  position: absolute;
+  top: -3px;
+  right: -3px;
+  background: #B23A2E;
+  color: #ffffff;
+  font-size: 10px;
+  font-weight: 800;
+  min-width: 16px;
+  height: 16px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 3px;
+  line-height: 1;
+}
+
+.notification-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 6px;
+  border-radius: 8px;
+  cursor: pointer;
+
+  &:hover {
+    background: #f3faf6;
+  }
+}
+
+.notification-detail {
+  padding: 4px 6px 14px 44px;
+}
+
+.notification-detail-row {
+  font-size: 12.5px;
+  color: #123328;
+  padding: 4px 0;
+}
+
+/* ----- Alert cards: Safety & Clinical Alerts + Recent Interaction Alerts share this base,
+   only the accent color differs, and both reuse the exact same clientRow patient-info band
+   the routine roster uses - so "who this patient is" always looks the same, only the
+   surrounding container (and why they're flagged) changes. ----- */
+.safety-section-title {
+  color: #B23A2E;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.interaction-section-title {
+  color: #8A5A10;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.alert-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: #ffffff;
+  border-radius: 10px;
+  padding: 14px 16px;
+  margin-bottom: 10px;
+  cursor: pointer;
+}
+
+.safety-alert-card {
+  border: 1px solid #EFC9C3;
+  border-left: 4px solid #B23A2E;
+}
+
+.interaction-alert-card {
+  border: 1px solid #F3E1BE;
+  border-left: 4px solid #8A5A10;
+}
+
+/* ----- Administrative & Compliance ----- */
+.admin-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.admin-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 14px 16px;
+  box-shadow: 0 1px 3px rgba(20, 50, 40, .08);
+}
+
+.admin-item-icon {
+  font-size: 19px;
+  color: #5a8c76;
+  flex-shrink: 0;
+}
+
+.admin-item-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.admin-item-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: #123328;
+}
+
+.admin-item-sub {
+  font-size: 11.5px;
+  color: #6b7876;
+  margin-top: 2px;
+}
+
+/* ===== Client Details (preview only) ===== */
+.client-detail-page {
+  height: 100%;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.detail-header {
+  flex-shrink: 0;
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 18px 22px;
+  box-shadow: 0 1px 3px rgba(20, 50, 40, .08);
+  margin-bottom: 20px;
+}
+
+.detail-header-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
+  }
+}
+
+.detail-delete {
+  color: #B23A2E;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.detail-identity {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.detail-avatar {
+  width: 56px;
+  height: 56px;
+  font-size: 16px;
+}
+
+.detail-name {
+  font-size: 20px;
+  font-weight: 800;
+  color: #123328;
+}
+
+.detail-contact {
+  display: flex;
+  gap: 18px;
+  margin-top: 4px;
+  font-size: 12.5px;
+  color: #6b7876;
+
+  span {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+}
+
+.detail-meta-row {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-top: 16px;
+  flex-wrap: wrap;
+}
+
+.detail-session-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 20px;
+  border: 1px solid #dfe7e4;
+  font-size: 12.5px;
+  color: #5a8c76;
+
+  b {
+    color: #123328;
+  }
+
+  .pi-pencil {
+    cursor: pointer;
+    margin-left: 4px;
+    color: #3F7D91;
+  }
+}
+
+.detail-tags {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+/* Fills the empty gutter .detail-meta-row otherwise leaves between the tags and the
+   right-aligned action buttons, surfacing the client's latest clinical scores right
+   in the header instead of buried below the fold. */
+.detail-scores {
+  display: flex;
+  gap: 8px;
+  margin-left: 16px;
+}
+
+.detail-actions {
+  display: flex;
+  gap: 10px;
+  margin-left: auto;
+}
+
+.detail-body {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+  gap: 20px;
+  align-items: start;
+}
+
+/* Single-column variant of .detail-body (Add Client, and Edit Activity mode) - just switches
+   off the two-column grid. The card itself (.detail-main below) stays full width like every
+   other page; only .activity-form's own 720px max-width constrains the fields themselves. */
+.add-client-body {
+  display: block;
+}
+
+.detail-main,
+.detail-side {
+  min-width: 0;
+  max-height: 100%;
+  overflow-y: auto;
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 18px;
+  box-shadow: 0 1px 3px rgba(20, 50, 40, .08);
+}
+
+/* The real app's second/right panel on a two-panel screen (e.g. Client Details' Interactions
+   panel) uses .highlight-bg (#FDF5DE), not plain white - matched here. */
+.detail-side {
+  background: #FDF5DE;
+}
+
+.detail-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18px;
+}
+
+.activity-group {
+  margin-bottom: 22px;
+}
+
+.activity-group-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: #123328;
+  margin-bottom: 10px;
+}
+
+.activity-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+}
+
+.activity-card {
+  background: #F8FBFA;
+  border: 1px solid #eef1f0;
+  border-radius: 10px;
+  padding: 12px 14px;
+}
+
+.activity-card-clickable {
+  cursor: pointer;
+  transition: box-shadow .15s ease, border-color .15s ease;
+
+  &:hover {
+    border-color: #cfe3da;
+    box-shadow: 0 4px 12px rgba(20, 50, 40, .1);
+  }
+}
+
+.activity-card-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: #123328;
+  margin-bottom: 10px;
+}
+
+.activity-emoji-row {
+  display: flex;
+  gap: 14px;
+}
+
+.emoji-count {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12.5px;
+  font-weight: 700;
+
+  &.good { color: #2F8F5B; }
+  &.neutral { color: #8A5A10; }
+  &.bad { color: #B23A2E; }
+}
+
+.chart-card {
+  background: #ffffff;
+  border: 1px solid #eef1f0;
+  border-radius: 10px;
+  padding: 14px;
+  height: 260px;
+}
+
+.side-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+
+  .pi {
+    cursor: pointer;
+    color: #5a8c76;
+  }
+}
+
+.chat-toggle-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.chat-status {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: #B23A2E;
+
+  &.active {
+    color: #2F8F5B;
+  }
+}
+
+.chat-thread {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.chat-date {
+  text-align: center;
+  font-size: 11px;
+  color: #8a9490;
+  margin: 6px 0;
+}
+
+.chat-bubble {
+  max-width: 78%;
+  padding: 9px 13px;
+  border-radius: 14px;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.chat-bubble-time {
+  font-size: 10px;
+  margin-top: 3px;
+  opacity: .7;
+}
+
+.chat-client {
+  align-self: flex-start;
+  background: #F0F3F2;
+  color: #123328;
+  border-bottom-left-radius: 4px;
+}
+
+.chat-therapist {
+  align-self: flex-end;
+  background: var(--primary-color, #3F7D91);
+  color: #ffffff;
+  border-bottom-right-radius: 4px;
+}
+
+.chat-input-row {
+  display: flex;
+  gap: 8px;
+
+  input {
+    flex: 1;
+  }
+}
+
+.activate-chat-btn {
+  width: 100%;
+  margin-top: 10px;
+}
+
+.comment-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.comment-card {
+  background: #F8FBFA;
+  border: 1px solid #eef1f0;
+  border-radius: 10px;
+  padding: 12px 14px;
+}
+
+.comment-date {
+  font-size: 11px;
+  color: #8a9490;
+  margin-bottom: 4px;
+}
+
+.comment-text {
+  font-size: 13px;
+  color: #3d4b47;
+  line-height: 1.45;
+}
+
+/* ===== Activity Details (preview only) ===== */
+.activity-nav {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-size: 12.5px;
+  color: #5a8c76;
+  font-variant-numeric: tabular-nums;
+
+  .pi-arrow-left,
+  .pi-arrow-right {
+    cursor: pointer;
+    color: #3F7D91;
+
+    &.disabled {
+      color: #c7d2ce;
+      cursor: default;
+      pointer-events: none;
+    }
+  }
+}
+
+.detail-edit {
+  color: #3F7D91;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.activity-meta-row {
+  align-items: flex-start;
+}
+
+.activity-meta-item {
+  min-width: 140px;
+}
+
+.activity-meta-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .03em;
+  color: #8a9490;
+  margin-bottom: 4px;
+}
+
+.activity-meta-value {
+  font-size: 13px;
+  font-weight: 600;
+  color: #123328;
+}
+
+.activity-meta-description {
+  flex: 1;
+  min-width: 220px;
+
+  .activity-meta-value {
+    font-weight: 400;
+    color: #3d4b47;
+    line-height: 1.45;
+  }
+}
+
+/* ===== Add Activity (bucket flow, preview only) ===== */
+.activity-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 720px;
+}
+
+.form-hint {
+  font-size: 12px;
+  color: #6b7876;
+  margin-bottom: 14px;
+  max-width: 640px;
+  line-height: 1.4;
+}
+
+/* Textareas default to a ~20-column browser width absent an explicit width, which is why
+   the Activity Description field looked cramped even inside the 720px-wide form. */
+.field-wide textarea {
+  width: 100%;
+  min-height: 90px;
+}
+
+/* Type / Deadline / Recurrence side by side, using the width that used to sit empty
+   next to the narrower Name/Description fields - also what keeps the form short enough
+   to fit without scrolling the page. */
+.schedule-fields-row {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
+  align-items: start;
+}
+
+.radio-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  flex-wrap: wrap;
+}
+
+.recurrence-custom-row {
+  margin-bottom: 6px;
+}
+
+.recurrence-custom-inputs {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: 26px;
+}
+
+.schedule-col-calendar.p-calendar {
+  width: 100%;
+  margin-top: 4px;
+}
+
+.field .radio-label {
+  display: inline;
+  font-size: 13px;
+  font-weight: 400;
+  color: #123328;
+  text-transform: none;
+  letter-spacing: normal;
+  margin-bottom: 0;
+  cursor: pointer;
+}
+
+.recurrence-number {
+  width: 56px;
+  text-align: center;
+}
+
+.recurrence-unit-dropdown.p-dropdown {
+  width: 110px;
+}
+
+.hint-text {
+  font-size: 11.5px;
+  color: #8a9490;
+  margin-bottom: 8px;
+}
+
+.url-input-row {
+  display: flex;
+  gap: 10px;
+
+  .url-label-input {
+    width: 180px;
+  }
+
+  .url-value-input {
+    flex: 1;
+  }
+}
+
+.url-chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.bucket-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.bucket-card {
+  background: #F3FAF6;
+  border: 1px solid #EAF6EF;
+  border-left: 3px solid #2F8F5B;
+  border-radius: 10px;
+  padding: 12px 14px;
+}
+
+.new-bucket-title {
+  color: #2F8F5B;
+}
+
+.existing-activity-title {
+  color: #6b7876;
+}
+
+.existing-activity-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 180px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.existing-activity-card {
+  background: #F4F6F5;
+  border: 1px solid #e5eae8;
+  border-left: 3px solid #c7d2ce;
+  border-radius: 10px;
+  padding: 8px 12px;
+}
+
+.existing-activity-name {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #5a6360;
+  text-transform: capitalize;
+}
+
+.existing-activity-meta {
+  font-size: 11px;
+  color: #8a9490;
+  margin-top: 2px;
+}
+
+.bucket-card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.bucket-card-name {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #123328;
+  text-transform: capitalize;
+}
+
+.bucket-card-actions {
+  display: flex;
+  gap: 10px;
+
+  .pi {
+    cursor: pointer;
+    color: #5a8c76;
+    font-size: 14px;
+  }
+
+  .pi-trash {
+    color: #B23A2E;
+  }
+}
+
+.bucket-card-meta {
+  font-size: 12px;
+  color: #6b7876;
+  margin-top: 2px;
+}
+
+.add-activity-footer {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.new-client-footer-hint {
+  text-align: right;
+  margin-top: 10px;
+  margin-bottom: 0;
+}
+
+.footer-spacer {
+  flex: 1;
+}
+
+/* ===== Video links (Activity Details view, preview only) ===== */
+.video-link-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 22px;
+}
+
+.video-link-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #F8FBFA;
+  border: 1px solid #eef1f0;
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #3F7D91;
+  text-decoration: none;
+
+  .pi-video {
+    color: #3F7D91;
+  }
+
+  span {
+    flex: 1;
+  }
+
+  .video-link-external {
+    font-size: 12px;
+    color: #8a9490;
+  }
+
+  &:hover {
+    border-color: #cfe3da;
+  }
+}
+
+/* ===== AI Assistant (concept, preview only) - deliberately a different visual mode from the
+   rest of the app: a dark conversational canvas instead of the light dashboard chrome. ===== */
+.ai-assistant-page {
+  margin: -20px -32px;
+  height: calc(100% + 40px);
+  background: radial-gradient(circle at 18% 0%, #1c3f4a 0%, #10262d 55%, #0a1a20 100%);
+  display: flex;
+  justify-content: center;
+  padding: 32px 24px;
+  overflow-y: auto;
+}
+
+.ai-chat-column {
+  width: 100%;
+  max-width: 760px;
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+}
+
+.ai-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  margin-bottom: 28px;
+}
+
+.ai-header-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #52D9A6, #3F7D91);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+.ai-header-title {
+  font-size: 17px;
+  font-weight: 800;
+  color: #ffffff;
+}
+
+.ai-header-sub {
+  font-size: 12.5px;
+  color: rgba(255, 255, 255, .6);
+  margin-top: 4px;
+  max-width: 540px;
+  line-height: 1.55;
+}
+
+.ai-thread {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  margin-bottom: 22px;
+}
+
+.ai-msg-user {
+  align-self: flex-end;
+  max-width: 70%;
+  background: linear-gradient(135deg, #3F7D91, #2c5c6c);
+  color: #ffffff;
+  padding: 11px 16px;
+  border-radius: 16px 16px 4px 16px;
+  font-size: 13.5px;
+  line-height: 1.5;
+}
+
+.ai-msg-assistant {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  max-width: 90%;
+}
+
+.ai-avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, .08);
+  border: 1px solid rgba(255, 255, 255, .16);
+  color: #52D9A6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  flex-shrink: 0;
+}
+
+.ai-msg-body {
+  background: rgba(255, 255, 255, .06);
+  border: 1px solid rgba(255, 255, 255, .1);
+  border-radius: 4px 16px 16px 16px;
+  padding: 14px 16px;
+  flex: 1;
+  min-width: 0;
+}
+
+.ai-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-bottom: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, .1);
+}
+
+.ai-step {
+  font-size: 11.5px;
+  color: rgba(255, 255, 255, .5);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  .pi {
+    color: #52D9A6;
+    font-size: 11px;
+  }
+}
+
+.ai-text {
+  font-size: 13.5px;
+  color: rgba(255, 255, 255, .92);
+  line-height: 1.55;
+}
+
+.ai-video-card,
+.ai-activity-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 12px;
+  background: rgba(255, 255, 255, .05);
+  border: 1px solid rgba(255, 255, 255, .12);
+  border-radius: 12px;
+  padding: 12px 14px;
+}
+
+.ai-video-thumb {
+  width: 54px;
+  height: 54px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #52D9A6, #3F7D91);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  font-size: 22px;
+  flex-shrink: 0;
+}
+
+.ai-video-info,
+.ai-activity-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.ai-video-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.ai-video-meta {
+  font-size: 11.5px;
+  color: rgba(255, 255, 255, .55);
+  margin-top: 2px;
+}
+
+.ai-summary-card {
+  margin-top: 10px;
+}
+
+.ai-summary-row {
+  font-size: 12.5px;
+  color: rgba(255, 255, 255, .85);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 0;
+
+  .pi {
+    font-size: 6px;
+    color: #52D9A6;
+  }
+}
+
+.ai-summary-open-btn {
+  color: #52D9A6 !important;
+}
+
+.ai-thinking-dots {
+  display: flex;
+  gap: 5px;
+  padding: 4px 0;
+
+  span {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, .5);
+    animation: ai-pulse 1.2s infinite ease-in-out;
+  }
+
+  span:nth-child(2) { animation-delay: .2s; }
+  span:nth-child(3) { animation-delay: .4s; }
+}
+
+@keyframes ai-pulse {
+  0%, 80%, 100% { opacity: .3; transform: scale(.8); }
+  40% { opacity: 1; transform: scale(1); }
+}
+
+.ai-quick-prompts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.ai-quick-prompt {
+  font-size: 12px;
+  color: rgba(255, 255, 255, .8);
+  background: rgba(255, 255, 255, .06);
+  border: 1px solid rgba(255, 255, 255, .14);
+  border-radius: 20px;
+  padding: 7px 14px;
+  cursor: pointer;
+  transition: background .15s ease;
+
+  &:hover {
+    background: rgba(255, 255, 255, .12);
+  }
+}
+
+.ai-input-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(255, 255, 255, .08);
+  border: 1px solid rgba(255, 255, 255, .18);
+  border-radius: 30px;
+  padding: 6px 6px 6px 18px;
+  flex-shrink: 0;
+
+  input.p-inputtext {
+    flex: 1;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    color: #ffffff;
+    font-size: 13.5px;
+    padding: 8px 0;
+
+    &::placeholder {
+      color: rgba(255, 255, 255, .4);
+    }
+
+    &:enabled:focus {
+      box-shadow: none;
+    }
+  }
+}
+
+/* ===== Auth screens (Sign In / Sign Up / Forgot Password, preview only) =====
+   Mirrors the real app's actual layout - form on the left half, the same mental-health
+   photo filling the right half - rather than a generic centered modal. */
+.auth-shell {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+}
+
+.auth-form-side {
+  width: 50%;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0 9vw;
+  background: #F3FAF6;
+}
+
+.auth-image-side {
+  width: 50%;
+  background: url('/assets/img/admin-signin-bg.png') center / cover no-repeat;
+}
+
+.auth-brand-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 34px;
+}
+
+.auth-brand-name {
+  font-size: 12px;
+  font-weight: 700;
+  color: #5a8c76;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+}
+
+.auth-brand-portal {
+  font-size: 17px;
+  font-weight: 800;
+  color: #123328;
+  margin-top: 1px;
+}
+
+.auth-card {
+  position: relative;
+  width: 100%;
+  max-width: 360px;
+  display: flex;
+  flex-direction: column;
+}
+
+.auth-card-wide {
+  max-width: 480px;
+}
+
+.privacy-policy-text {
+  font-size: 12.5px;
+  color: #3d4b47;
+  line-height: 1.6;
+  white-space: pre-line;
+  max-height: 260px;
+  overflow-y: auto;
+  background: #ffffff;
+  border: 1px solid #e2ece7;
+  border-radius: 10px;
+  padding: 16px;
+  margin: 16px 0 20px;
+}
+
+.auth-logo-dot {
+  background: #ffffff;
+  flex-shrink: 0;
+}
+
+.auth-title {
+  font-size: 22px;
+  font-weight: 800;
+  color: #123328;
+}
+
+.auth-sub {
+  font-size: 12.5px;
+  color: #6b7876;
+  margin-top: 4px;
+  line-height: 1.5;
+}
+
+.auth-hint {
+  font-size: 11.5px;
+  color: #5a8c76;
+  background: #EAF6EF;
+  border-radius: 8px;
+  padding: 8px 12px;
+  margin-top: 14px;
+  margin-bottom: 6px;
+  line-height: 1.5;
+}
+
+.auth-error {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #B23A2E;
+  background: #FBEAE7;
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin-top: 10px;
+  margin-bottom: 6px;
+}
+
+.auth-card .field {
+  margin-bottom: 16px;
+}
+
+.auth-card .field input,
+.auth-password-input {
+  width: 100%;
+}
+
+.auth-submit {
+  width: 100%;
+  justify-content: center;
+  margin-top: 6px;
+}
+
+.auth-links {
+  text-align: right;
+  margin-top: 12px;
+}
+
+.auth-link {
+  color: #3F7D91;
+  font-weight: 600;
+  font-size: 12.5px;
+  cursor: pointer;
+}
+
+.auth-footer {
+  text-align: center;
+  font-size: 12.5px;
+  color: #6b7876;
+  margin-top: 20px;
+}
+
+.auth-back {
+  display: inline-flex;
+  margin-bottom: 14px;
+}
+
+/* ===== Empty states (0 sessions today, etc., preview only) ===== */
+.empty-state-block {
+  text-align: center;
+  padding: 40px 20px;
+
+  .pi {
+    font-size: 26px;
+    color: #b7c6c0;
+    margin-bottom: 10px;
+  }
+}
+
+.empty-state-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: #123328;
+}
+
+.empty-state-sub {
+  font-size: 12.5px;
+  color: #6b7876;
+  margin-top: 6px;
+  max-width: 320px;
+  margin-left: auto;
+  margin-right: auto;
+  line-height: 1.5;
+}
+
+/* ===== Sample data banner (first-time therapist, 0 real clients, preview only) ===== */
+.sample-data-banner {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: #EFF6FF;
+  border: 1px solid #BFDBFE;
+  border-radius: 12px;
+  padding: 14px 18px;
+  margin-bottom: 20px;
+
+  .pi {
+    font-size: 20px;
+    color: #2563EB;
+    flex-shrink: 0;
+  }
+
+  .empty-state-title, .empty-state-sub {
+    text-align: left;
+    margin-left: 0;
+    max-width: none;
+  }
+
+  .empty-state-title {
+    color: #1E3A8A;
+  }
+
+  > div {
+    flex: 1;
+  }
+
+  .p-button {
+    flex-shrink: 0;
+  }
+}
+
+.sample-tag {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .03em;
+  color: #2563EB;
+  background: #EFF6FF;
+  border: 1px solid #BFDBFE;
+  border-radius: 5px;
+  padding: 1px 6px;
+  margin-left: 6px;
+}
+
+/* ===== Site Map (entry point, preview only) ===== */
+.sitemap-shell {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 36px 48px;
+  background: radial-gradient(circle at 50% 0%, #EAF6EF 0%, #F3FAF6 60%);
+}
+
+.sitemap-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 34px;
+}
+
+.sitemap-logo {
+  background: #ffffff;
+  flex-shrink: 0;
+}
+
+.sitemap-title {
+  font-size: 19px;
+  font-weight: 800;
+  color: #123328;
+}
+
+.sitemap-sub {
+  font-size: 12.5px;
+  color: #6b7876;
+  margin-top: 4px;
+  max-width: 640px;
+  line-height: 1.55;
+}
+
+.sitemap-lane {
+  margin-bottom: 30px;
+}
+
+.sitemap-lane-title {
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  color: #5a8c76;
+  margin-bottom: 14px;
+}
+
+.sitemap-flow {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.sitemap-arrow {
+  color: #b7c6c0;
+  font-size: 13px;
+  flex-shrink: 0;
+}
+
+.sitemap-node {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #ffffff;
+  border: 1px solid #e2ece7;
+  border-radius: 10px;
+  padding: 10px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #123328;
+  cursor: pointer;
+  box-shadow: 0 1px 3px rgba(20, 50, 40, .06);
+  transition: box-shadow .15s ease, border-color .15s ease, transform .15s ease;
+  white-space: nowrap;
+
+  .pi {
+    color: #3F7D91;
+    font-size: 13px;
+  }
+
+  &:hover {
+    border-color: #3F7D91;
+    box-shadow: 0 4px 12px rgba(20, 50, 40, .12);
+    transform: translateY(-1px);
+  }
+}
+
+.sitemap-node-accent {
+  background: #123328;
+  color: #ffffff;
+  border-color: #123328;
+
+  .pi {
+    color: #52D9A6;
+  }
+}
+
+.sitemap-nodes-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+/* ===== Notifications (standalone page, preview only) ===== */
+.notification-list-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 18px 0 12px;
+}
+
+.notification-page-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.notification-page-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 14px 16px;
+  box-shadow: 0 1px 3px rgba(20, 50, 40, .08);
+}
+
+.notification-page-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.notification-page-name {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #123328;
+}
+
+.notification-page-text {
+  font-weight: 400;
+  color: #5a6360;
+  margin-left: 4px;
+}
+
+.notification-page-detail {
+  font-size: 12.5px;
+  color: #6b7876;
+  margin-top: 2px;
+}
+
+.notification-page-time {
+  font-size: 11.5px;
+  color: #8a9490;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.notification-view-all {
+  text-align: center;
+  font-size: 12px;
+  font-weight: 700;
+  color: #3F7D91;
+  cursor: pointer;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid #eef1f0;
+}
+
+/* ===== Settings - retrofitted onto the same white-card model as every other page
+   (was the one holdout still floating bare on the page background). ===== */
+.settings-body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.settings-card {
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 16px 28px;
+  box-shadow: 0 1px 3px rgba(20, 50, 40, .08);
+  margin-bottom: 20px;
+}
+
+/* Personal Details and Clinic Details stay stacked (as in the real app), but 3 fields per
+   row instead of 2 - compact enough that the whole tab fits without scrolling. */
+.field-grid-3 {
+  grid-template-columns: repeat(3, 1fr);
+  max-width: none;
+}

@@ -1,0 +1,173 @@
+<div class="app-container aa-page">
+    <!-- ===== Header ===== -->
+    <header class="aa-header">
+        <button type="button" class="btn-reset aa-back" (click)="location.back()">
+            <i class="pi pi-arrow-left" aria-hidden="true"></i>
+            <span>Back</span>
+        </button>
+        <div class="aa-title-row">
+            <h1 class="heading-reset aa-title">Add activities</h1>
+        </div>
+        <p class="aa-subtitle">Step 2 of 2. Set the session dates and fill the bucket; everything in it is shared with your new client when you select Finish. You can skip this and add activities later.</p>
+    </header>
+
+    <div class="aa-body">
+        <div class="aa-form-col">
+            <!-- ===== Session dates ===== -->
+            <section class="aa-card" aria-labelledby="aa-session-title">
+                <h2 class="heading-reset aa-card-title" id="aa-session-title">Session dates</h2>
+                <div class="aa-row-2">
+                    <div class="field">
+                        <label class="field-label" for="aa-session-start">Current session</label>
+                        <p-calendar inputId="aa-session-start" [(ngModel)]="sessionStartDate" (ngModelChange)="form.clear('session_start')" [maxDate]="currentSessionMaxDate"
+                            dateFormat="dd/mm/yy" [showIcon]="true" [readonlyInput]="true" placeholder="DD/MM/YYYY" appendTo="body"
+                            [class.p-invalid]="form.errors.session_start" [attr.aria-invalid]="form.errors.session_start ? true : null"></p-calendar>
+                        <div class="field-error" *ngIf="form.errors.session_start">{{form.errors.session_start}}</div>
+                    </div>
+                    <div class="field">
+                        <label class="field-label" for="aa-session-end">Next session</label>
+                        <p-calendar inputId="aa-session-end" [(ngModel)]="sessionEndDate" (ngModelChange)="form.clear('session_end')" [minDate]="sessionStartDate || currentSessionMaxDate"
+                            dateFormat="dd/mm/yy" [showIcon]="true" [readonlyInput]="true" placeholder="DD/MM/YYYY" appendTo="body"
+                            [class.p-invalid]="form.errors.session_end" [attr.aria-invalid]="form.errors.session_end ? true : null"></p-calendar>
+                        <div class="field-error" *ngIf="form.errors.session_end">{{form.errors.session_end}}</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== Activity form ===== -->
+            <section class="aa-card" aria-labelledby="aa-activity-title">
+                <div class="aa-card-head">
+                    <h2 class="heading-reset aa-card-title" id="aa-activity-title">Activity details</h2>
+                    <ng-container *ngIf="activityHistory.length">
+                        <button pButton type="button" class="p-button-outlined p-button-sm" label="Reuse a past activity" icon="pi pi-history" (click)="activityHistoryPanel.toggle($event)" aria-haspopup="menu"></button>
+                        <p-overlayPanel #activityHistoryPanel styleClass="menu-panel">
+                            <div class="menu-list" role="menu">
+                                <button type="button" role="menuitem" class="menu-item" *ngFor="let activity of activityHistory" (click)="getActivityInfo(activity); activityHistoryPanel.hide()">{{activity.activity_name}}</button>
+                            </div>
+                        </p-overlayPanel>
+                    </ng-container>
+                </div>
+
+                <div class="field">
+                    <label class="field-label" for="aa-name">Activity name</label>
+                    <input id="aa-name" type="text" pInputText [(ngModel)]="activityForm.activity_name" (ngModelChange)="form.clear('activity_name')"
+                        [class.p-invalid]="form.errors.activity_name" [attr.aria-invalid]="form.errors.activity_name ? true : null" [attr.aria-describedby]="form.errors.activity_name ? 'aa-name-error' : null">
+                    <div class="field-error" id="aa-name-error" *ngIf="form.errors.activity_name">{{form.errors.activity_name}}</div>
+                </div>
+
+                <div class="field">
+                    <label class="field-label" for="aa-description">Description <span class="aa-optional">(optional)</span></label>
+                    <textarea id="aa-description" #description pInputTextarea [autoResize]="true" rows="3" [(ngModel)]="activityForm.activity_description"></textarea>
+                </div>
+
+                <div class="field">
+                    <label class="field-label" for="aa-type">Activity type</label>
+                    <p-dropdown inputId="aa-type" [options]="activityTypeList" optionLabel="name" optionValue="id" [(ngModel)]="activityForm.activity_type_id" (ngModelChange)="form.clear('activity_type')"
+                        placeholder="Choose a type" [class.p-invalid]="form.errors.activity_type" [attr.aria-invalid]="form.errors.activity_type ? true : null"></p-dropdown>
+                    <div class="field-error" *ngIf="form.errors.activity_type">{{form.errors.activity_type}}</div>
+                </div>
+
+                <div class="field">
+                    <fieldset class="aa-choices" [attr.aria-invalid]="form.errors.deadline ? true : null">
+                        <legend>Deadline</legend>
+                        <div class="aa-choice">
+                            <p-radioButton name="aa-deadline" value="session" inputId="aa-deadline-session" [(ngModel)]="selectedDeadline" (ngModelChange)="onDeadlineModeChange()"></p-radioButton>
+                            <label for="aa-deadline-session">Next session<ng-container *ngIf="sessionEndDate"> ({{formatDate(sessionEndDate)}})</ng-container></label>
+                        </div>
+                        <div class="aa-choice">
+                            <p-radioButton name="aa-deadline" value="deadline" inputId="aa-deadline-date" [(ngModel)]="selectedDeadline" (ngModelChange)="onDeadlineModeChange()"></p-radioButton>
+                            <label for="aa-deadline-date">A specific date</label>
+                        </div>
+                    </fieldset>
+                    <div class="aa-deadline-picker" *ngIf="selectedDeadline == 'deadline'">
+                        <label class="visually-hidden" for="aa-deadline">Deadline date</label>
+                        <p-calendar inputId="aa-deadline" [ngModel]="deadlinePicked" (ngModelChange)="deadlinePicked = $event; onDeadlinePicked($event)" [minDate]="currentSessionMaxDate"
+                            dateFormat="dd/mm/yy" [showIcon]="true" [readonlyInput]="true" placeholder="DD/MM/YYYY" appendTo="body" [class.p-invalid]="form.errors.deadline"></p-calendar>
+                    </div>
+                    <div class="field-error" *ngIf="form.errors.deadline">{{form.errors.deadline}}</div>
+                </div>
+
+                <div class="field">
+                    <fieldset class="aa-choices">
+                        <legend>Repeats</legend>
+                        <div class="aa-choice">
+                            <p-radioButton name="aa-recurrence" [value]="5" inputId="aa-recurrence-once" [(ngModel)]="recurrenceMode"></p-radioButton>
+                            <label for="aa-recurrence-once">One time</label>
+                        </div>
+                        <div class="aa-choice">
+                            <p-radioButton name="aa-recurrence" [value]="1" inputId="aa-recurrence-daily" [(ngModel)]="recurrenceMode"></p-radioButton>
+                            <label for="aa-recurrence-daily">Every day</label>
+                        </div>
+                        <div class="aa-choice aa-recurrence-every">
+                            <p-radioButton name="aa-recurrence" [value]="0" inputId="aa-recurrence-every" [(ngModel)]="recurrenceMode"></p-radioButton>
+                            <label for="aa-recurrence-every">Every</label>
+                            <input type="text" inputmode="numeric" pInputText class="aa-recurrence-count" aria-label="How many" [(ngModel)]="activityForm.activity_recurrence" [disabled]="recurrenceMode != 0">
+                            <span id="aa-recurrence-unit-label" class="visually-hidden">Unit</span>
+                            <p-dropdown [options]="recurrenceUnits" optionLabel="label" optionValue="value" [(ngModel)]="recurrenceUnit" [disabled]="recurrenceMode != 0" ariaLabelledBy="aa-recurrence-unit-label" [style]="{width: '8rem'}"></p-dropdown>
+                        </div>
+                    </fieldset>
+                    <div class="field-error" *ngIf="form.errors.recurrence">{{form.errors.recurrence}}</div>
+                </div>
+
+                <div class="field">
+                    <span class="field-label">Links to share <span class="aa-optional">(optional)</span></span>
+                    <div class="aa-link-inputs">
+                        <div>
+                            <label class="field-label" for="aa-link-text">Text to show</label>
+                            <input id="aa-link-text" type="text" pInputText placeholder="e.g. Breathing guide" [(ngModel)]="urlName" (ngModelChange)="form.clear('url_text')"
+                                [class.p-invalid]="form.errors.url_text" [attr.aria-invalid]="form.errors.url_text ? true : null">
+                            <div class="field-error" *ngIf="form.errors.url_text">{{form.errors.url_text}}</div>
+                        </div>
+                        <div>
+                            <label class="field-label" for="aa-link-url">URL</label>
+                            <input id="aa-link-url" type="url" pInputText placeholder="https://" [(ngModel)]="currentUrl" (keydown.enter)="addUrl()" (ngModelChange)="form.clear('url')"
+                                [class.p-invalid]="form.errors.url" [attr.aria-invalid]="form.errors.url ? true : null">
+                            <div class="field-error" *ngIf="form.errors.url">{{form.errors.url}}</div>
+                        </div>
+                        <button pButton type="button" class="p-button-outlined" label="Add link" icon="pi pi-plus" (click)="addUrl()"></button>
+                    </div>
+                    <ul class="aa-links" *ngIf="urlList.length">
+                        <li class="aa-link-chip" *ngFor="let url of urlList; let i = index">
+                            <button type="button" class="btn-reset aa-link-edit" (click)="editUrl(i)" [title]="'Edit ' + url.split('~')[1]">
+                                <i class="pi pi-link" aria-hidden="true"></i>{{url.split('~')[0]}}
+                            </button>
+                            <button type="button" class="btn-icon" (click)="removeUrl(url)" [attr.aria-label]="'Remove link ' + url.split('~')[0]"><i class="pi pi-times" aria-hidden="true"></i></button>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="aa-card-foot">
+                    <button pButton type="button" class="p-button-outlined" label="Add to bucket" icon="pi pi-arrow-right" iconPos="right" (click)="appendActivities()"></button>
+                </div>
+            </section>
+        </div>
+
+        <!-- ===== Bucket ===== -->
+        <aside class="aa-bucket" aria-labelledby="aa-bucket-title">
+            <h2 class="heading-reset aa-bucket-title" id="aa-bucket-title">Activity bucket <span class="aa-count">{{bucketCount}}</span></h2>
+            <p class="aa-bucket-empty" *ngIf="!bucketCount">Nothing here yet. Fill in an activity and select Add to bucket.</p>
+            <ul class="aa-bucket-list" *ngIf="bucketCount">
+                <li class="aa-bucket-item" *ngFor="let activity of activityList; let i = index">
+                    <div class="aa-bucket-body">
+                        <div class="aa-bucket-name">{{activity.activity_name}}</div>
+                        <dl class="aa-bucket-facts">
+                            <dt>Type</dt><dd>{{getActivityType(activity.activity_type_id)}}</dd>
+                            <dt>Deadline</dt><dd>{{formatDate(activity.activity_deadline)}}</dd>
+                            <dt>Repeats</dt><dd>{{recurrenceLabel(activity)}}</dd>
+                        </dl>
+                    </div>
+                    <div class="aa-bucket-actions">
+                        <button type="button" class="btn-icon" (click)="editActivity(i)" [attr.aria-label]="'Edit ' + activity.activity_name" pTooltip="Edit" tooltipPosition="top"><i class="pi pi-pencil" aria-hidden="true"></i></button>
+                        <button type="button" class="btn-icon aa-remove" (click)="removeActivity(i)" [attr.aria-label]="'Remove ' + activity.activity_name + ' from the bucket'" pTooltip="Remove" tooltipPosition="top"><i class="pi pi-trash" aria-hidden="true"></i></button>
+                    </div>
+                </li>
+            </ul>
+        </aside>
+    </div>
+
+    <!-- ===== Actions ===== -->
+    <footer class="aa-footer">
+        <button pButton type="button" class="p-button-text" label="Skip for now" (click)="serviceManager.navigateToPage('/clients')"></button>
+        <button pButton type="button" label="Finish" icon="pi pi-check" (click)="addActivities()"></button>
+    </footer>
+</div>

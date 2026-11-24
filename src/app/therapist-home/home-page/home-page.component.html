@@ -1,0 +1,239 @@
+<div class="app-container">
+    <div class="h-100">
+        <!-- Placeholder layout while the client list loads -->
+        <div class="h-100 clients-page" *ngIf="!apiLoaded">
+            <div class="dashboard-sticky-header">
+                <div class="top-bar">
+                    <div class="stat-tiles">
+                        <div class="stat-tile" *ngFor="let tile of [1, 2, 3]">
+                            <p-skeleton width="2.5rem" height="1.75rem"></p-skeleton>
+                            <p-skeleton width="55%" height="0.75rem" styleClass="mt-2"></p-skeleton>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="page-columns">
+                <div class="page-main-col">
+                    <p-skeleton width="9rem" height="1.5rem" styleClass="mb-3"></p-skeleton>
+                    <app-skeleton variant="rows" [count]="5"></app-skeleton>
+                </div>
+                <div class="page-side-col">
+                    <p-skeleton width="12rem" height="1.25rem" styleClass="mb-3"></p-skeleton>
+                    <app-skeleton variant="rows" [count]="3" [compact]="true"></app-skeleton>
+                </div>
+            </div>
+        </div>
+
+        <div class="h-100 clients-page" id="clients-added" *ngIf="apiLoaded && (clientsCopy.length || therapistHomeService.inactiveClients.length)">
+            <h1 class="visually-hidden">Clients</h1>
+            <div class="dashboard-sticky-header">
+                <div class="top-bar">
+                    <dl class="stat-tiles">
+                        <div class="stat-tile">
+                            <dt class="stat-label">Active clients</dt>
+                            <dd class="stat-value">{{clientsCopy.length}}</dd>
+                        </div>
+                        <div class="stat-tile">
+                            <dt class="stat-label">Awaiting activation</dt>
+                            <dd class="stat-value">{{therapistHomeService.inactiveClients.length}}</dd>
+                        </div>
+                        <div class="stat-tile" [class.stat-tile-attention]="interactionAlertClients.length">
+                            <dt class="stat-label">Awaiting reply</dt>
+                            <dd class="stat-value">{{interactionAlertClients.length}}</dd>
+                        </div>
+                    </dl>
+
+                    <span class="p-input-icon-left search-box" id="search-box">
+                        <i class="pi pi-search" aria-hidden="true"></i>
+                        <input type="search" pInputText class="search-input" placeholder="Search name, city or tag" aria-label="Search clients" [(ngModel)]="searchClient" (keyup.enter)="searchClientList()" (ngModelChange)="searchClientList()">
+                        <button type="button" class="btn-icon clear-search" *ngIf="searchClient.trim()" (click)="clearSearch()" aria-label="Clear search"><i class="pi pi-times" aria-hidden="true"></i></button>
+                    </span>
+                    <button pButton pRipple type="button" label="Add client" icon="pi pi-plus" tw-select="show-add-client" class="top-bar-add" (click)="navToAddClient()"></button>
+                </div>
+            </div>
+
+            <div class="page-columns">
+                <section class="page-main-col" aria-labelledby="active-clients-title">
+                    <div class="col-head">
+                        <h2 class="heading-reset col-title" id="active-clients-title">
+                            Active clients
+                            <span class="col-count" *ngIf="clientsCopy.length">{{isFiltered ? clients.length + ' of ' + clientsCopy.length : clientsCopy.length}}</span>
+                        </h2>
+                        <div class="col-head-actions" *ngIf="clientsCopy.length">
+                            <span id="tag-filter-label" class="visually-hidden">Filter by tag</span>
+                            <p-dropdown [options]="tagOptions" optionLabel="label" optionValue="value" [(ngModel)]="selectedTag" (onChange)="applyFilters()"
+                                placeholder="All tags" ariaLabelledBy="tag-filter-label" [style]="{width: '11rem'}"></p-dropdown>
+                            <button pButton type="button" class="p-button-text p-button-sm sort-toggle"
+                                [icon]="isDescending ? 'pi pi-sort-amount-down' : 'pi pi-sort-amount-up-alt'"
+                                [label]="isDescending ? 'Newest first' : 'Oldest first'"
+                                [attr.aria-label]="'Sorted ' + (isDescending ? 'newest' : 'oldest') + ' first. Change the order'"
+                                (click)="toggleSort()"></button>
+                        </div>
+                    </div>
+
+                    <ul class="client-list" *ngIf="clients.length">
+                        <li *ngFor="let client of clients">
+                            <div class="client-row-card" (click)="goToClientDetails(client.client_id)" role="link" tabindex="0" (keydown.enter)="goToClientDetails(client.client_id)" [attr.aria-label]="'Open ' + client.first_name + ' ' + client.last_name">
+                                <div class="client-avatar" [ngClass]="avatarTone(client)" aria-hidden="true">{{client.first_name[0]}}{{client.last_name[0]}}</div>
+                                <div class="client-name-col" (mouseenter)="hoveredClient = client; clientInfoPanel.show($event)" (mouseleave)="clientInfoPanel.hide()">
+                                    <div class="client-name">{{client.first_name}} {{client.last_name}}</div>
+                                    <div class="client-city">{{client.city}}</div>
+                                </div>
+                                <div class="client-scores">
+                                    <span class="score-badge" *ngIf="phqBand(client.phq_score) as band" [ngClass]="'tier-' + band.tier">PHQ-9 {{client.phq_score}} · {{band.label}}</span>
+                                    <span class="score-trend-chip" *ngIf="scoreTrend(client.phq_score_delta) as trend" [ngClass]="trend.cls" [title]="'PHQ-9 ' + trend.cls + ' by ' + trend.value">{{trend.arrow}} {{trend.value}}</span>
+                                    <span class="score-badge" *ngIf="gadBand(client.gad_score) as band2" [ngClass]="'tier-' + band2.tier">GAD-7 {{client.gad_score}} · {{band2.label}}</span>
+                                    <span class="score-trend-chip" *ngIf="scoreTrend(client.gad_score_delta) as trend2" [ngClass]="trend2.cls" [title]="'GAD-7 ' + trend2.cls + ' by ' + trend2.value">{{trend2.arrow}} {{trend2.value}}</span>
+                                    <span class="score-recency" *ngIf="scoreRecency(latestScoreTimestamp(client)) as recency" [ngClass]="{'stale': recency.stale}">{{recency.text}}</span>
+                                    <span class="score-none" *ngIf="!phqBand(client.phq_score) && !gadBand(client.gad_score)">No scores yet</span>
+                                </div>
+                                <div class="client-tags">
+                                    <span class="pov-tag" *ngFor="let pov of visibleTags(client)" [title]="pov.purpose_of_visit_name">{{pov.purpose_of_visit_name}}</span>
+                                    <span class="pov-tag pov-tag-more" *ngIf="client.purpose_of_visit.length > 2" [title]="hiddenTagNames(client)">+{{client.purpose_of_visit.length - 2}}</span>
+                                </div>
+                                <div class="client-session" *ngIf="client.next_session_date; else noSession" [class.client-session-overdue]="sessionCell(client.next_session_date).overdue">
+                                    <span class="client-session-when">{{sessionCell(client.next_session_date).when}}</span>
+                                    <span class="client-session-date">{{sessionCell(client.next_session_date).date}}</span>
+                                </div>
+                                <ng-template #noSession><div class="client-session client-session-none">No session scheduled</div></ng-template>
+                            </div>
+                        </li>
+                    </ul>
+
+                    <!-- Filters match nobody -->
+                    <div class="list-empty" *ngIf="clientsCopy.length && !clients.length">
+                        <h3 class="heading-reset list-empty-title">No clients match</h3>
+                        <p class="list-empty-text">Nobody matches the current search or tag.</p>
+                        <button pButton type="button" class="p-button-outlined" label="Clear search and filters" (click)="clearFilters()"></button>
+                    </div>
+
+                    <!-- Everyone added so far still has to activate the app -->
+                    <div class="list-empty" *ngIf="!clientsCopy.length && therapistHomeService.inactiveClients.length">
+                        <img class="list-empty-art" [src]="appImage.noActiveClients" alt="">
+                        <h3 class="heading-reset list-empty-title">No active clients yet</h3>
+                        <p class="list-empty-text">
+                            {{therapistHomeService.inactiveClients.length}}
+                            {{therapistHomeService.inactiveClients.length == 1 ? "client hasn't" : "clients haven't"}}
+                            activated the TAAP app yet. You can send them a reminder.
+                        </p>
+                        <button pButton pRipple type="button" label="Remind all" icon="pi pi-send" (click)="therapistHomeService.remindAll()"></button>
+                    </div>
+                </section>
+
+                <aside class="page-side-col" aria-label="Alerts">
+                    <section class="page-section" *ngIf="safetyAlertClients.length" aria-labelledby="safety-alerts-title">
+                        <h2 class="heading-reset section-title section-title-danger" id="safety-alerts-title">
+                            <i class="pi pi-exclamation-triangle" aria-hidden="true"></i>
+                            Safety and clinical alerts
+                            <span class="section-count">{{safetyAlertClients.length}}</span>
+                        </h2>
+                        <p class="section-hint">Latest PHQ-9 or GAD-7 score is 15 or higher.</p>
+                        <div class="mini-alert-card safety-mini-card" *ngFor="let client of safetyAlertClients" (click)="goToClientDetails(client.client_id)">
+                            <div class="client-avatar" [ngClass]="avatarTone(client)" aria-hidden="true">{{client.first_name[0]}}{{client.last_name[0]}}</div>
+                            <div class="client-name-col" (mouseenter)="hoveredClient = client; clientInfoPanel.show($event)" (mouseleave)="clientInfoPanel.hide()">
+                                <div class="client-name">{{client.first_name}} {{client.last_name}}</div>
+                                <div class="mini-alert-scores">
+                                    <span class="score-badge tier-attention" *ngIf="phqBand(client.phq_score)?.tier == 'attention'">PHQ-9 {{client.phq_score}}</span>
+                                    <span class="score-badge tier-attention" *ngIf="gadBand(client.gad_score)?.tier == 'attention'">GAD-7 {{client.gad_score}}</span>
+                                </div>
+                            </div>
+                            <button pButton pRipple type="button" label="Review" icon="pi pi-arrow-right" iconPos="right" class="p-button-sm review-now-btn" [attr.aria-label]="'Review ' + client.first_name + ' ' + client.last_name" (click)="goToClientDetails(client.client_id); $event.stopPropagation()"></button>
+                        </div>
+                    </section>
+
+                    <section class="page-section" *ngIf="interactionAlertClients.length" aria-labelledby="reply-alerts-title">
+                        <h2 class="heading-reset section-title section-title-warning" id="reply-alerts-title">
+                            <i class="pi pi-comments" aria-hidden="true"></i>
+                            Awaiting reply
+                            <span class="section-count">{{interactionAlertClients.length}}</span>
+                        </h2>
+                        <p class="section-hint">Their latest message hasn't had a reply.</p>
+                        <div class="mini-alert-card interaction-mini-card" *ngFor="let client of interactionAlertClients" (click)="goToClientDetails(client.client_id)">
+                            <div class="client-avatar" [ngClass]="avatarTone(client)" aria-hidden="true">{{client.first_name[0]}}{{client.last_name[0]}}</div>
+                            <div class="client-name-col" (mouseenter)="hoveredClient = client; clientInfoPanel.show($event)" (mouseleave)="clientInfoPanel.hide()">
+                                <div class="client-name">{{client.first_name}} {{client.last_name}}</div>
+                            </div>
+                            <button pButton pRipple type="button" label="Reply" icon="pi pi-arrow-right" iconPos="right" class="p-button-sm p-button-outlined review-now-btn" [attr.aria-label]="'Reply to ' + client.first_name + ' ' + client.last_name" (click)="goToClientDetails(client.client_id); $event.stopPropagation()"></button>
+                        </div>
+                    </section>
+
+                    <div class="side-empty" *ngIf="!safetyAlertClients.length && !interactionAlertClients.length">
+                        <i class="pi pi-check-circle" aria-hidden="true"></i>
+                        <h2 class="heading-reset side-empty-title">No alerts right now</h2>
+                        <p class="side-empty-text">Clients with a PHQ-9 or GAD-7 score of 15 or higher, or a message waiting for your reply, show up here.</p>
+                    </div>
+                </aside>
+            </div>
+        </div>
+
+        <!-- Hover card: key facts about whichever client is currently under the mouse -->
+        <p-overlayPanel #clientInfoPanel [style]="{width: '280px'}">
+            <div class="hover-card" *ngIf="hoveredClient">
+                <div class="hover-card-title">{{hoveredClient.first_name}} {{hoveredClient.last_name}}</div>
+                <div class="hover-card-sub">{{hoveredClient.city}}</div>
+                <div class="client-scores hover-card-scores" *ngIf="phqBand(hoveredClient.phq_score) || gadBand(hoveredClient.gad_score)">
+                    <span class="score-badge" *ngIf="phqBand(hoveredClient.phq_score) as band" [ngClass]="'tier-' + band.tier">PHQ-9 {{hoveredClient.phq_score}} · {{band.label}}</span>
+                    <span class="score-badge" *ngIf="gadBand(hoveredClient.gad_score) as band2" [ngClass]="'tier-' + band2.tier">GAD-7 {{hoveredClient.gad_score}} · {{band2.label}}</span>
+                </div>
+                <div class="client-tags" *ngIf="hoveredClient.purpose_of_visit?.length">
+                    <span class="pov-tag" *ngFor="let pov of hoveredClient.purpose_of_visit">{{pov.purpose_of_visit_name}}</span>
+                </div>
+                <div class="hover-card-meta" *ngIf="hoveredClient.next_session_date; else noSessionMeta">
+                    Next session: {{serviceManager.showCalendarDate(hoveredClient.next_session_date)}}
+                </div>
+                <ng-template #noSessionMeta><div class="hover-card-meta">No session scheduled</div></ng-template>
+            </div>
+        </p-overlayPanel>
+
+        <!-- No clients at all yet: first-run welcome with the walkthrough video -->
+        <section class="welcome" *ngIf="apiLoaded && isFirstRun" aria-labelledby="welcome-title">
+            <div class="welcome-inner">
+                <div class="welcome-copy">
+                    <p class="welcome-eyebrow">Welcome to TAAP</p>
+                    <h1 class="heading-reset welcome-title" id="welcome-title">Welcome{{therapistName ? ', ' + therapistName : ''}}.</h1>
+                    <p class="welcome-lede">Let's set you up. Here's how a client joins, from this portal to their phone.</p>
+                    <ol class="welcome-steps">
+                        <li><span class="welcome-step-num" aria-hidden="true">1</span><span><strong>You add the client</strong> with their name, email and phone.</span></li>
+                        <li><span class="welcome-step-num" aria-hidden="true">2</span><span><strong>They get an email</strong> with an activation code.</span></li>
+                        <li><span class="welcome-step-num" aria-hidden="true">3</span><span><strong>They activate the TAAP app</strong> with that code and set a password.</span></li>
+                        <li><span class="welcome-step-num" aria-hidden="true">4</span><span><strong>They show up here</strong>, ready for activities, check-ins and messages.</span></li>
+                    </ol>
+                    <button pButton pRipple type="button" label="Add your first client" icon="pi pi-plus" (click)="navToAddClient()"></button>
+                </div>
+                <button type="button" class="btn-reset welcome-video" (click)="openWalkthrough()">
+                    <span class="welcome-video-media">
+                        <img class="welcome-video-poster" [src]="walkthroughPoster" alt="">
+                        <span class="welcome-video-play" aria-hidden="true"><i class="pi pi-play"></i></span>
+                    </span>
+                    <span class="welcome-video-label">Watch how a client joins <span class="welcome-video-length">1 min</span></span>
+                </button>
+            </div>
+        </section>
+
+        <p-dialog header="How a client joins TAAP" [(visible)]="showWalkthrough" [modal]="true" [dismissableMask]="true"
+            [draggable]="false" [resizable]="false" [style]="{width: '60rem'}" [breakpoints]="{'1024px': '94vw'}" styleClass="walkthrough-dialog">
+            <!-- Rendered only while open, so closing the dialog also stops playback. The video is
+                 narrated; the component starts it with sound, or muted plus "Turn on sound" when the
+                 browser's autoplay rules require it. Each step is captioned in the picture; the
+                 captions track (off by default, CC in the player) has the narration word for word. -->
+            <div class="walkthrough-player" *ngIf="showWalkthrough">
+                <video #walkthroughVideo class="walkthrough-video" [src]="walkthroughSrc" [poster]="walkthroughPoster"
+                    controls playsinline preload="auto" (volumechange)="onWalkthroughVolumeChange()"
+                    aria-label="Narrated walkthrough: you add a client, they get an activation code by email, activate the TAAP app on their phone, and appear in your Clients list.">
+                    <track kind="captions" srclang="en" label="English" [src]="walkthroughCaptions">
+                </video>
+                <!-- Live region exists from the start so the button is announced when it appears -->
+                <div class="walkthrough-sound" role="status">
+                    <button *ngIf="walkthroughSoundBlocked" type="button" class="btn-reset walkthrough-unmute" (click)="unmuteWalkthrough()"
+                        aria-label="Video is playing muted. Turn on sound">
+                        <i class="pi pi-volume-up" aria-hidden="true"></i>Turn on sound
+                    </button>
+                </div>
+            </div>
+            <ng-template pTemplate="footer">
+                <button pButton type="button" class="p-button-text" label="Close" (click)="showWalkthrough = false"></button>
+                <button pButton type="button" label="Add your first client" icon="pi pi-plus" (click)="addClientFromWalkthrough()"></button>
+            </ng-template>
+        </p-dialog>
+    </div>
+</div>

@@ -1,0 +1,44 @@
+<!-- Drawn like the PrimeNG inputs: label above, error below. -->
+<label class="field-label" [attr.for]="inputId">{{label}}</label>
+<div class="phi-box" [class.phi-box-invalid]="error" [class.phi-box-disabled]="disabled">
+    <button #trigger type="button" class="phi-trigger" cdkOverlayOrigin #origin="cdkOverlayOrigin"
+            [disabled]="disabled" (click)="toggle()" (keydown)="onTriggerKeydown($event)"
+            aria-haspopup="listbox" [attr.aria-expanded]="isOpen" [attr.aria-label]="'Country code ' + country.name + ' ' + country.dial_code"
+            [title]="country.name">
+        <span class="phi-iso">{{country.iso}}</span>
+        <span class="phi-dial">{{country.dial_code}}</span>
+        <span class="phi-caret" [class.phi-caret-open]="isOpen"></span>
+    </button>
+    <input #phoneInput class="phi-box-input" [id]="inputId" type="tel" inputmode="numeric" autocomplete="tel-national"
+           [value]="digits" [attr.maxlength]="maxDigits" [disabled]="disabled" [required]="required"
+           [placeholder]="country.iso == 'IN' ? '10-digit number' : 'Phone number'"
+           [attr.aria-invalid]="error ? true : null" [attr.aria-describedby]="error ? inputId + '-error' : null"
+           (input)="onDigitsInput($event)">
+</div>
+<div class="field-error" [id]="inputId + '-error'" *ngIf="error">{{error}}</div>
+
+<!-- Country picker, anchored to the country button. -->
+<ng-template cdkConnectedOverlay [cdkConnectedOverlayOrigin]="origin" [cdkConnectedOverlayOpen]="isOpen"
+             [cdkConnectedOverlayPositions]="positions" (overlayOutsideClick)="onOutsideClick($event)" (detach)="close()">
+    <div class="phi-panel" (keydown)="onPanelKeydown($event)">
+        <div class="phi-search-row">
+            <i class="pi pi-search phi-search-icon" aria-hidden="true"></i>
+            <input #searchInput class="phi-search" type="text" placeholder="Search country or code (e.g. Ind, +91)"
+                   [value]="query" (input)="onSearch($event)" aria-label="Search country or dial code"
+                   role="combobox" aria-autocomplete="list" aria-controls="phi-options">
+        </div>
+        <div #optionList class="phi-list" role="listbox" id="phi-options">
+            <ng-container *ngFor="let c of results; let i = index">
+                <div class="phi-divider" *ngIf="pinnedCount && i == pinnedCount"></div>
+                <div class="phi-option" role="option" [class.phi-active]="i == activeIndex" [class.phi-selected]="isSelected(c)"
+                     [attr.aria-selected]="isSelected(c)" (mousedown)="$event.preventDefault()" (click)="choose(c)" (mouseenter)="activeIndex = i">
+                    <span class="phi-iso">{{c.iso}}</span>
+                    <span class="phi-name">{{c.name}}</span>
+                    <span class="phi-code">{{c.dial_code}}</span>
+                    <i class="pi pi-check phi-check" *ngIf="isSelected(c)" aria-hidden="true"></i>
+                </div>
+            </ng-container>
+            <div class="phi-empty" *ngIf="!results.length">No country matches "{{query}}"</div>
+        </div>
+    </div>
+</ng-template>

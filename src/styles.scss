@@ -1,0 +1,717 @@
+/* Global styles. Colors, type, spacing and stacking come from styles/_tokens.scss. */
+
+@import 'styles/tokens';
+
+html,
+body {
+    height: 100%;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: var(--font-sans);
+    color: var(--color-text);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* Older names, kept so existing component CSS follows the tokens.
+   Coral used to be the action color; teal is now the only accent. */
+:root {
+    --primary-color: var(--color-primary);
+    --primary-btn-color: var(--color-primary);
+    --body-color: var(--color-surface-muted);
+    --font-family: var(--font-sans);
+    --secondary-color: var(--color-primary);
+    --great: var(--mood-great);
+    --good: var(--mood-good);
+    --bad: var(--mood-bad);
+}
+
+/* Scores, counts and dates line up in columns. */
+.tabular-nums {
+    font-variant-numeric: tabular-nums;
+}
+
+/* CDK overlays (the phone input's country list) must open above PrimeNG dialogs. */
+.cdk-overlay-container {
+    z-index: var(--z-popover);
+}
+
+.great-bg {
+    background-color: var(--great);
+}
+
+.good-bg {
+    background-color: var( --good);
+}
+
+.bad-bg {
+    background-color: var(--bad);
+}
+
+.phq {
+    color: var(--chart-phq) !important;
+}
+
+.gad {
+    color: var(--chart-gad) !important;
+}
+
+.add-btn {
+    background-color: var(--secondary-color);
+    color: white;
+    border-radius: 0px 8px 8px 0px;
+    display: flex;
+    justify-content: center;
+    border: 0px;
+    width: 100%;
+    height: 100%;
+    font-size: 14px;
+    align-items: center;
+}
+
+.sub-txt {
+    color: var(--color-text-muted);
+    font-weight: 400;
+}
+
+.sort-pos {
+    height: 55px;
+    margin: 0px 0px -5px 11px;
+    padding-top: 2px;
+    cursor: pointer;
+}
+
+.w-95 {
+    width: 95% !important;
+}
+
+.w-80 {
+    width: 80% !important;
+}
+
+.w-33 {
+    width: 33% !important;
+}
+
+/* App shell: fixed-width sidebar rail + fluid main area. Widths come from
+   flex, not 100vw math, so a vertical scrollbar never causes sideways scroll. */
+.app-main {
+    display: flex;
+    width: 100%;
+    height: 100vh;
+    height: 100dvh;
+    overflow: hidden;
+}
+
+.app-content {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.app-content:focus {
+    outline: none;
+}
+
+.header-font {
+    font-family: var(--font-sans);
+    font-weight: var(--weight-semibold);
+    letter-spacing: var(--tracking-tight);
+}
+
+.app-progress {
+    height: 0.78vh;
+    width: 25vw;
+    background: var(--color-primary);
+    box-shadow: var(--shadow-sm);
+    border-radius: 4.9vh;
+    border-top-left-radius: 0px !important;
+    border-bottom-left-radius: 0px !important;
+}
+
+.header-bg {
+    background: linear-gradient(100deg, var(--teal-800), var(--teal-600));
+}
+
+.primary-txt {
+    color: var(--primary-color);
+}
+
+.secondary-txt {
+    color: var(--secondary-color) !important;
+}
+
+.grey-txt {
+    color: var(--color-text-muted);
+}
+
+@for $i from 1 through 60 {
+    .font-#{$i} {
+        font-size: $i + px + '!important';
+    }
+}
+
+.nowrap {
+    white-space: nowrap;
+}
+
+.br-7 {
+    border-radius: 7px !important;
+}
+
+.br-8 {
+    border-radius: 8px !important;
+}
+
+
+.side-bar {
+    flex: 0 0 80px;
+    width: 80px;
+    height: 100%;
+    background: var(--primary-color);
+}
+
+.login-context {
+    font-style: normal;
+    font-weight: 400;
+    text-align: center;
+    font-size: 14px;
+    margin-top: 1.5625vh;
+    cursor: pointer;
+}
+
+.app-container {
+    width: 100%;
+    height: 100vh;
+    height: 100dvh;
+    overflow: hidden;
+}
+
+/* Tags used to alternate pink and grey by list position, which meant nothing. */
+.tag1,
+.tag2 {
+    background-color: var(--neutral-100);
+    color: var(--neutral-700);
+}
+
+.ellipsis {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    overflow-wrap: normal;
+}
+
+.highlight {
+    color: var(--secondary-color);
+    font-weight: 600;
+}
+
+.tags {
+    height: fit-content;
+    padding: 4px 8px;
+    white-space: nowrap;
+    text-align: center;
+    min-width: 94px !important;
+    width: 94px !important;
+    font-size: 14px;
+    border-radius: 7px;
+    font-weight: lighter;
+    margin: 4px;
+    cursor: pointer;
+}
+
+.profile-logo {
+    border-radius: 50%;
+}
+
+.camera-badge {
+    background-color: var(--secondary-color);
+    border-radius: 50px;
+    margin: -20px;
+    top: 40px;
+    position: relative;
+}
+
+.main-btn:disabled {
+    background: var(--teal-200);
+    box-shadow: none;
+}
+
+.w-250 {
+    width: 250px !important;
+}
+
+.w-150 {
+    width: 150px;
+}
+
+.secondary-btn {
+    font-size: 20px;
+    color: var(--primary-color);
+}
+
+.main-btn {
+    color: white;
+    background: var(--secondary-color);
+    border-radius: 50px;
+    border: 0px;
+    padding: 7px 50px;
+    font-weight: 500;
+    font-size: 20px;
+    width: 100%;
+    height: 100%;
+    border: 1px solid #FFFFFF;
+    /* shadow */
+    box-shadow: var(--shadow-sm);
+}
+
+.light-btn {
+    color: white;
+    background: var(--primary-color);
+    border-radius: 50px;
+    border: 0px;
+    font-weight: 500;
+    border: 1px solid #FFFFFF;
+    /* shadow */
+    box-shadow: var(--shadow-sm);
+}
+
+.main-outline-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--secondary-color);
+    background: white;
+    border: 1px solid var(--secondary-color) !important;
+    border-radius: 50px;
+    border: 0px;
+    cursor: pointer;
+    padding: 7px 50px;
+    font-size: 20px;
+    width: 100%;
+    height: 100%;
+}
+
+.light-outline-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--primary-color);
+    background: white;
+    border: 1px solid var(--primary-color) !important;
+    border-radius: 50px;
+    border: 0px;
+    cursor: pointer;
+}
+
+.cursor {
+    cursor: pointer;
+}
+
+.h-60 {
+    height: 60% !important;
+}
+
+/* Headings keep whatever size their classes give them (Bootstrap would restyle them). */
+.heading-reset {
+    margin: 0;
+    font-size: inherit;
+    font-weight: inherit;
+    line-height: inherit;
+}
+
+.main-header {
+    margin: 0;
+    font-family: var(--font-sans);
+    font-size: 22px;
+    font-weight: var(--weight-semibold);
+    letter-spacing: var(--tracking-tight);
+    color: var(--color-text);
+}
+
+.main-bg {
+    background-color: var(--body-color);
+}
+
+.close-btn {
+    margin-left: -3rem;
+    position: absolute;
+    margin-top: 0.4rem;
+    font-size: 20px;
+}
+
+.btn:hover {
+    border: none;
+}
+
+textarea {
+    max-height: 350px;
+    min-height: 75px;
+}
+
+::-webkit-scrollbar {
+    width: 1vh;
+    height: 3vh !important;
+}
+
+::-webkit-scrollbar-thumb {
+    /* width: 100%; */
+    height: 4px;
+    background-color: var(--primary-color);
+    border-radius: 30px;
+}
+
+::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 5px grey;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-button {}
+
+/* Keyboard focus: one visible ring everywhere; mouse clicks don't show it. */
+:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+}
+
+/* On the dark sidebar and client header the ring is white. */
+.side-bar :focus-visible,
+.header-bg :focus-visible {
+    outline-color: var(--color-text-inverse);
+}
+
+/* These draw their own focus state (field outline, PrimeNG focus shadow). */
+input:focus-visible,
+textarea:focus-visible,
+.p-component:focus-visible,
+.p-button:focus-visible {
+    outline: none;
+}
+
+/* A real <button> that looks like whatever it replaced (text, link, card). */
+.btn-reset,
+.btn-icon {
+    appearance: none;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: inherit;
+    text-align: inherit;
+    cursor: pointer;
+}
+
+/* Text-styled buttons take the surrounding font; icon buttons size their <i> icon instead. */
+.btn-reset {
+    font: inherit;
+}
+
+/* Icon-only button with a 40px target; always pair it with aria-label. */
+.btn-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 2.5rem;
+    min-height: 2.5rem;
+    border-radius: var(--radius-full);
+    transition: background-color var(--duration-fast) var(--ease-out);
+}
+
+.btn-icon:hover {
+    background-color: rgba(21, 38, 45, 0.06);
+}
+
+.header-bg .btn-icon:hover {
+    background-color: rgba(255, 255, 255, 0.14);
+}
+
+.btn-icon:disabled {
+    opacity: 0.4;
+    cursor: default;
+}
+
+/* PrimeNG buttons rendered as links (<a pButton>) shouldn't pick up link underlines. */
+a.p-button,
+a.p-button:hover {
+    text-decoration: none;
+}
+
+/* Hidden until focused: lets keyboard users jump past the sidebar. */
+.skip-link {
+    position: fixed;
+    top: var(--space-2);
+    left: var(--space-2);
+    z-index: var(--z-loader);
+    padding: var(--space-2) var(--space-4);
+    border-radius: var(--radius-sm);
+    background: var(--color-surface);
+    color: var(--color-primary-active);
+    box-shadow: var(--shadow-md);
+    font-weight: var(--weight-semibold);
+    transform: translateY(-200%);
+}
+
+.skip-link:focus {
+    transform: none;
+}
+
+/* Form fields: visible labels and inline errors (see components/form-errors.ts). */
+.field {
+    margin-top: var(--space-4);
+}
+
+/* `.field > .field-label` outranks PrimeFlex's `.field > label` (inline-block), so every
+   label sits the same way, including ones nested inside a component like the phone input. */
+.field-label,
+.field > .field-label {
+    display: block;
+    margin-bottom: var(--space-2);
+    font-size: var(--text-sm);
+    font-weight: var(--weight-medium);
+    color: var(--color-text);
+}
+
+/* Guidance under a field (e.g. "At least 8 characters"); replaced by the error when there is one. */
+.field-hint {
+    margin-top: var(--space-1);
+    font-size: var(--text-xs);
+    color: var(--color-text-muted);
+}
+
+.field-error {
+    margin-top: var(--space-1);
+    font-size: var(--text-xs);
+    line-height: var(--leading-tight);
+    color: var(--color-danger);
+}
+
+/* PrimeNG fields flagged by our own validation (FormErrors) get [class.p-invalid]. */
+.p-inputtext.p-invalid,
+p-dropdown.p-invalid .p-dropdown,
+p-calendar.p-invalid .p-inputtext {
+    border-color: var(--color-danger);
+}
+
+
+input.is-invalid:focus,
+textarea.is-invalid:focus {
+    border: 2px solid var(--color-danger) !important;
+}
+
+/* Skeleton placeholders: calmer shimmer, and none for people who turn motion off. */
+.p-skeleton {
+    background-color: var(--neutral-100);
+}
+
+/* On the dark client header. */
+.p-skeleton.skeleton-on-dark {
+    background-color: rgba(255, 255, 255, 0.18);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .p-skeleton::after {
+        animation: none;
+    }
+}
+
+/* Purpose-of-visit tag (Clients, Client details). Replaces the old fixed-width .tags. */
+.pov-tag {
+    display: inline-block;
+    max-width: 100%;
+    overflow: hidden;
+    padding: 2px var(--space-2);
+    border-radius: var(--radius-sm);
+    background: var(--neutral-100);
+    color: var(--neutral-700);
+    font-size: var(--text-xs);
+    font-weight: var(--weight-medium);
+    line-height: 1.5;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    vertical-align: middle;
+}
+
+.pov-tag-more {
+    background: transparent;
+    color: var(--color-text-muted);
+}
+
+/* Red item in PrimeNG menus (e.g. "Delete client"). */
+.p-menu .menu-item-danger .p-menuitem-text,
+.p-menu .menu-item-danger .p-menuitem-icon {
+    color: var(--color-danger);
+}
+
+/* Dropdowns often sit in right-aligned columns; keep their own text left-aligned. */
+.p-dropdown {
+    text-align: left;
+}
+
+/* Menu of actions inside a p-overlayPanel (e.g. "Activity history"). */
+.menu-panel .p-overlaypanel-content {
+    padding: var(--space-1);
+}
+
+.menu-list {
+    display: flex;
+    flex-direction: column;
+    max-height: 300px;
+    min-width: 200px;
+    overflow-y: auto;
+}
+
+.menu-item {
+    padding: var(--space-2) var(--space-3);
+    border: 0;
+    border-radius: var(--radius-sm);
+    background: transparent;
+    color: var(--color-text);
+    font: inherit;
+    font-size: var(--text-sm);
+    text-align: left;
+    cursor: pointer;
+    transition: background-color var(--duration-fast) var(--ease-out);
+}
+
+.menu-item:hover {
+    background: var(--color-surface-hover);
+}
+
+.menu-item:focus-visible {
+    outline: none;
+    box-shadow: var(--focus-ring);
+}
+
+.logout {
+    background: var(--neutral-100);
+    width: 56px;
+    height: 56px;
+    font-size: 30px;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+}
+
+.filter-sort-pos {
+    text-align: end;
+}
+
+@media only screen and (max-width: 1030px) {
+    .main-outline-btn {
+        font-size: 16px;
+    }
+    .main-btn {
+        font-size: 16px;
+    }
+    .secondary-btn {
+        font-size: 16px;
+    }
+}
+
+@media only screen and (max-device-width: 768px) {
+    .main-outline-btn {
+        font-size: 16px;
+    }
+    .main-btn {
+        font-size: 16px;
+    }
+    .secondary-btn {
+        font-size: 16px;
+    }
+    .responsive-reset-image {
+        position: absolute;
+        bottom: 0px;
+        top: 0px;
+    }
+    .responsive-reset-card {
+        background-color: white;
+        z-index: 1;
+    }
+}
+
+@media only screen and (min-device-width: 768px) and (max-device-width: 1024px) {
+    .main-outline-btn {
+        font-size: 16px;
+    }
+    .main-btn {
+        font-size: 16px;
+    }
+    .secondary-btn {
+        font-size: 16px;
+    }
+}
+
+@media only screen and (min-width: 1030px) and (max-width: 1366px) {
+    .main-outline-btn {
+        font-size: 16px;
+    }
+    .main-btn {
+        font-size: 16px;
+    }
+    .secondary-btn {
+        font-size: 16px;
+    }
+}
+
+@media only screen and (min-width: 1370px) and (max-width: 1605px) {
+    .main-outline-btn {
+        font-size: 20px;
+    }
+    .main-bg {
+        font-size: 20px;
+    }
+    .secondary-btn {
+        font-size: 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .responsive-reset-image {
+        position: absolute;
+        bottom: 0px;
+        top: 0px;
+    }
+    .responsive-reset-card {
+        background-color: white;
+        z-index: 1;
+    }
+    .filter-sort-pos {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-top: 5px;
+    }
+    .add-client-btn-margin {
+        margin: 1rem;
+    }
+    .add-client-form-padding {
+        padding-left: 0 !important;
+    }
+}
+
+.highlight-bg {
+    background-color: var(--color-surface-brand);
+}
+
+.image-container {
+    box-sizing: border-box;
+    width: 45px;
+    height: 45px;
+    border: 1px solid #FFFFFF;
+    border-radius: 50px 50px 0px 50px;
+    transform: rotate(90deg);
+}
+
+.lable-emoji {
+    transform: rotate(-90deg);
+    width: 28px;
+    /* display: flex; */
+    position: absolute;
+    top: 7px;
+    right: 7px;
+}
+
+/* Screen-level styles shared by several components; last so they win over the generic rules above. */
+@import 'styles/activity-editor';
+@import 'styles/auth';

@@ -1,0 +1,136 @@
+<div class="app-container nt-page">
+    <div class="nt-inner">
+        <!-- ===== Header ===== -->
+        <header class="nt-header">
+            <h1 class="heading-reset nt-title">Notifications</h1>
+            <p class="nt-subtitle">Messages from your clients and updates on their activities.</p>
+        </header>
+
+        <div class="nt-layout">
+            <div class="nt-main">
+            <!-- ===== Tabs and filters ===== -->
+            <div class="nt-toolbar">
+                <span id="nt-type-label" class="visually-hidden">Show</span>
+                <p-selectButton [options]="typeOptions" optionLabel="label" optionValue="value" [(ngModel)]="notificationType" (onChange)="onToggleChange()" ariaLabelledBy="nt-type-label">
+                    <ng-template let-option>
+                        <span class="p-button-label">{{option.label}}</span>
+                        <span class="nt-tab-count" *ngIf="isApiLoaded">{{typeCount(option.value)}}</span>
+                    </ng-template>
+                </p-selectButton>
+
+                <div class="nt-filters" *ngIf="isApiLoaded && typeCount(notificationType)">
+                    <span id="nt-tag-label" class="visually-hidden">Purpose of visit</span>
+                    <p-dropdown [options]="tagOptions" optionLabel="label" optionValue="value" [ngModel]="selectedTag" (onChange)="selectTag($event.value)" ariaLabelledBy="nt-tag-label" [style]="{width: '13rem'}"></p-dropdown>
+                    <button pButton type="button" class="p-button-text p-button-sm" [label]="isDescending ? 'Newest first' : 'Oldest first'"
+                        [icon]="isDescending ? 'pi pi-sort-amount-down' : 'pi pi-sort-amount-up-alt'" (click)="sortByTime(!isDescending)"
+                        [pTooltip]="isDescending ? 'Show oldest first' : 'Show newest first'" tooltipPosition="top"></button>
+                </div>
+            </div>
+
+            <!-- ===== Loading ===== -->
+            <div class="nt-card" *ngIf="!isApiLoaded">
+                <app-skeleton variant="rows" [count]="5"></app-skeleton>
+            </div>
+
+            <!-- ===== List ===== -->
+            <section class="nt-card" *ngIf="isApiLoaded && messageList.length" [attr.aria-label]="notificationType">
+                <div class="nt-selectbar">
+                    <label class="nt-check-all">
+                        <input type="checkbox" class="nt-checkbox" [checked]="isSelectAll" [indeterminate]="checkSelectExist()" (change)="setSelectAll($any($event.target).checked)">
+                        <span>{{selectedCount ? selectedCount + ' selected' : 'Select all'}}</span>
+                    </label>
+                    <button pButton type="button" class="p-button-outlined p-button-danger p-button-sm" icon="pi pi-times"
+                        [label]="selectedCount ? 'Clear ' + selectedCount : 'Clear'" [disabled]="!selectedCount" (click)="showClearConfirm = true"></button>
+                </div>
+
+                <div class="nt-day" *ngFor="let group of groups; trackBy: trackByGroup">
+                    <h2 class="heading-reset nt-day-title">{{group.label}}</h2>
+                    <ul class="nt-list">
+                        <li class="nt-item" *ngFor="let message of group.items; trackBy: trackByNotification" [class.nt-item-selected]="message.checked">
+                            <input type="checkbox" class="nt-checkbox nt-item-check" [(ngModel)]="message.checked" (ngModelChange)="updateSelectAll()"
+                                [attr.aria-label]="'Select notification from ' + message.client_name">
+                            <div class="client-avatar nt-item-avatar" [ngClass]="avatarTone(message)" aria-hidden="true">{{initials(message)}}</div>
+                            <div class="nt-item-who">
+                                <div class="nt-name">{{message.client_name}}</div>
+                                <div class="nt-meta">
+                                    <span *ngIf="message.city">{{message.city}}</span>
+                                    <span class="pov-tag" *ngFor="let pov of visibleTags(message)" [title]="pov.purpose_of_visit_name">{{pov.purpose_of_visit_name}}</span>
+                                    <span class="pov-tag pov-tag-more" *ngIf="message.purpose_of_visit.length > 2" [title]="hiddenTagNames(message)">+{{message.purpose_of_visit.length - 2}}</span>
+                                </div>
+                            </div>
+                            <p class="nt-item-text">
+                                <i class="pi" [ngClass]="message.notification_type_id === 1 ? 'pi-comment' : 'pi-check-square'" aria-hidden="true"></i>
+                                <span>{{notificationText(message)}}</span>
+                            </p>
+                            <time class="nt-item-time" [attr.datetime]="isoTime(message.notification_timestamp)">{{serviceManager.showTime(message.notification_timestamp)}}</time>
+                            <button pButton type="button" class="p-button-outlined p-button-sm nt-item-action" [label]="message.notification_type_id === 1 ? 'Reply' : 'View client'"
+                                [attr.aria-label]="(message.notification_type_id === 1 ? 'Reply to ' : 'View ') + message.client_name" (click)="showChat(message)"></button>
+                        </li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- ===== Empty: the tag filter hides everything ===== -->
+            <div class="nt-card nt-empty" *ngIf="isApiLoaded && !messageList.length && typeCount(notificationType)">
+                <h2 class="heading-reset nt-empty-title">Nothing for this purpose of visit</h2>
+                <p class="nt-empty-text">No {{notificationType == 'Messages' ? 'messages' : 'activity updates'}} come from clients tagged {{selectedTag}}.</p>
+                <button pButton type="button" class="p-button-outlined" label="Show all purposes" (click)="selectTag('ALL')"></button>
+            </div>
+
+            <!-- ===== Empty: nothing on this tab ===== -->
+            <div class="nt-card nt-empty" *ngIf="isApiLoaded && !typeCount(notificationType)">
+                <img class="nt-empty-art" [src]="notificationType == 'Messages' ? appImage.noMessageNotification : appImage.noActivityNotification" alt="">
+                <h2 class="heading-reset nt-empty-title">{{notificationType == 'Messages' ? 'No new messages' : 'No activity updates'}}</h2>
+                <p class="nt-empty-text" *ngIf="notificationType == 'Messages'">When a client sends you a message, it shows up here until you clear it.</p>
+                <p class="nt-empty-text" *ngIf="notificationType != 'Messages'">You'll see a note here when a client joins the app or finishes their activities.</p>
+            </div>
+            </div>
+            <!-- ===== Awaiting activation (the clients counted on the sidebar bell) ===== -->
+            <aside class="nt-side" aria-labelledby="nt-await-title">
+                <h2 class="heading-reset nt-side-title" id="nt-await-title">
+                    Awaiting activation <span class="nt-side-count">{{therapistHomeService.inactiveClients.length}}</span>
+                </h2>
+                <p class="nt-side-hint">These clients haven't signed in to the TAAP app yet. Their activation code is valid for 7 days.</p>
+
+                <ng-container *ngIf="therapistHomeService.inactiveClients.length; else allActive">
+                    <div class="nt-side-actions">
+                        <label class="nt-check-all" *ngIf="therapistHomeService.inactiveClients.length > 1">
+                            <input type="checkbox" class="nt-checkbox" [checked]="therapistHomeService.isSelectAll" [indeterminate]="therapistHomeService.checkSelectExist()"
+                                (change)="therapistHomeService.setSelectAll($any($event.target).checked)">
+                            <span>Select all</span>
+                        </label>
+                        <button pButton type="button" class="p-button-outlined p-button-sm nt-remind" icon="pi pi-send"
+                            [label]="selectedInactiveCount ? 'Send reminder (' + selectedInactiveCount + ')' : 'Send reminder'" [disabled]="!selectedInactiveCount"
+                            (click)="therapistHomeService.clientsRemainder()"></button>
+                    </div>
+                    <ul class="nt-await-list">
+                        <li class="nt-await-item" *ngFor="let client of therapistHomeService.inactiveClients">
+                            <input type="checkbox" class="nt-checkbox" [(ngModel)]="client.checked" (ngModelChange)="therapistHomeService.updateSelectAll()"
+                                [attr.aria-label]="'Select ' + clientName(client)">
+                            <div class="client-avatar nt-await-avatar" [ngClass]="avatarTone({client_name: clientName(client)})" aria-hidden="true">{{initials({client_name: clientName(client)})}}</div>
+                            <div class="nt-await-who">
+                                <button type="button" class="btn-reset nt-await-name" (click)="openClient(client.client_id)">{{clientName(client)}}</button>
+                                <div class="nt-await-meta">
+                                    <span *ngIf="client.city">{{client.city}}</span>
+                                    <span *ngIf="addedLabel(client)">{{addedLabel(client)}}</span>
+                                </div>
+                                <div class="nt-await-expired" *ngIf="therapistHomeService.isExpired(client.added_time)">
+                                    <span><i class="pi pi-exclamation-circle" aria-hidden="true"></i> Code expired</span>
+                                    <button pButton type="button" class="p-button-text p-button-sm" label="Send a new code" (click)="therapistHomeService.regenerateActivationCode(client)"></button>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </ng-container>
+                <ng-template #allActive>
+                    <p class="nt-side-empty"><i class="pi pi-check-circle" aria-hidden="true"></i> Everyone you've added has activated the app.</p>
+                </ng-template>
+            </aside>
+        </div>
+    </div>
+</div>
+
+<app-confirm-dialog [(visible)]="showClearConfirm" [header]="selectedCount == 1 ? 'Clear 1 notification?' : 'Clear ' + selectedCount + ' notifications?'"
+    confirmLabel="Clear" [danger]="true" (confirm)="clearNotification()">
+    Cleared notifications are removed from this list for good. The client's messages stay in their chat.
+</app-confirm-dialog>

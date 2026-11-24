@@ -1,0 +1,336 @@
+/* Activity details: header (aa-* from styles/_activity-editor.scss), then the ratings chart
+   beside the comments panel. Patterns match the Client details page. */
+
+/* ----- Header ----- */
+.ad-header-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+}
+
+.ad-pager {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+}
+
+.ad-pager .btn-icon:disabled {
+    opacity: 0.35;
+    cursor: default;
+}
+
+.ad-pager-count {
+    min-width: 3.5rem;
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+}
+
+.ad-title-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-2) var(--space-4);
+}
+
+.ad-title-row .aa-title-row {
+    align-items: center;
+}
+
+.ad-status {
+    padding: 2px var(--space-2);
+    border-radius: var(--radius-sm);
+    background: var(--color-primary-subtle);
+    color: var(--teal-800);
+    font-size: var(--text-xs);
+    font-weight: var(--weight-medium);
+}
+
+.ad-actions {
+    display: flex;
+    gap: var(--space-2);
+    margin-top: var(--space-2);
+}
+
+.ad-facts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2) var(--space-8);
+    margin: var(--space-3) 0 0;
+}
+
+.ad-facts dt {
+    font-size: var(--text-xs);
+    font-weight: var(--weight-regular);
+    color: var(--color-text-muted);
+}
+
+.ad-facts dd {
+    margin: 0;
+    font-size: var(--text-sm);
+    font-weight: var(--weight-medium);
+    color: var(--color-text);
+}
+
+.ad-description {
+    max-width: 48rem;
+    margin: var(--space-3) 0 0;
+    font-size: var(--text-sm);
+    line-height: var(--leading-normal);
+    color: var(--color-text);
+    white-space: pre-wrap;
+}
+
+.ad-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2) var(--space-4);
+    margin: var(--space-2) 0 0;
+    padding: 0;
+    list-style: none;
+    font-size: var(--text-sm);
+}
+
+.ad-links a {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-weight: var(--weight-medium);
+    color: var(--color-primary-active);
+}
+
+/* ----- Body: chart | comments ----- */
+.ad-body {
+    flex: 1;
+    min-height: 0;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) clamp(18rem, 34%, 26rem);
+}
+
+.ad-main {
+    min-width: 0;
+    overflow-y: auto;
+    padding: var(--space-5) var(--space-6) var(--space-8);
+}
+
+.ad-card {
+    padding: var(--space-5);
+    border-radius: var(--radius-lg);
+    background: var(--color-surface);
+    box-shadow: var(--shadow-sm);
+}
+
+.ad-card-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--space-3);
+    margin-bottom: var(--space-4);
+}
+
+.ad-card-title {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--text-lg);
+    font-weight: var(--weight-semibold);
+    color: var(--color-text);
+}
+
+.ad-card-hint {
+    margin: 2px 0 0;
+    font-size: var(--text-xs);
+    color: var(--color-text-muted);
+}
+
+.ad-legend {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2) var(--space-4);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-size: var(--text-xs);
+    color: var(--color-text-muted);
+}
+
+.ad-legend li {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+}
+
+.ad-legend img {
+    width: 1.125rem;
+    height: 1.125rem;
+}
+
+.ad-legend-dot {
+    display: inline-block;
+    width: 0.625rem;
+    height: 0.625rem;
+    margin-right: 2px;
+    border-radius: var(--radius-full);
+}
+
+.ad-chart {
+    height: 18rem;
+}
+
+.ad-chart ngx-charts-bar-vertical-2d {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+.ad-chart-pager {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-3);
+    margin-top: var(--space-2);
+}
+
+.ad-chart-range {
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+}
+
+.ad-empty {
+    padding: var(--space-8) var(--space-4);
+    text-align: center;
+}
+
+.ad-empty img {
+    width: 6rem;
+    margin-bottom: var(--space-3);
+}
+
+.ad-empty p {
+    max-width: 24rem;
+    margin: 0 auto;
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+    line-height: var(--leading-normal);
+}
+
+/* ----- Comments panel ----- */
+.ad-side {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    border-left: 1px solid var(--color-surface-brand-border);
+    background: var(--color-surface-brand);
+}
+
+.ad-side-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-2);
+    padding: var(--space-4) var(--space-4) 0;
+}
+
+.ad-count {
+    min-width: 1.5rem;
+    padding: 0 var(--space-2);
+    border-radius: var(--radius-full);
+    background: var(--color-surface);
+    font-size: var(--text-xs);
+    font-weight: var(--weight-bold);
+    line-height: 1.5rem;
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+}
+
+.ad-mood-filter {
+    display: block;
+    padding: var(--space-3) var(--space-4) 0;
+}
+
+:host ::ng-deep .ad-mood-filter .p-button {
+    gap: var(--space-1);
+    padding: 0.375rem 0.625rem;
+    font-size: var(--text-xs);
+}
+
+:host ::ng-deep .ad-mood-filter img {
+    width: 1.125rem;
+    height: 1.125rem;
+}
+
+.ad-mood-count {
+    min-width: 1.125rem;
+    padding: 0 var(--space-1);
+    border-radius: var(--radius-full);
+    background: rgba(21, 38, 45, 0.08);
+    font-size: 0.6875rem;
+    font-weight: var(--weight-semibold);
+    line-height: 1.125rem;
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+}
+
+.ad-comments {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    padding: var(--space-2) var(--space-4) var(--space-6);
+}
+
+.ad-day-title {
+    margin: var(--space-4) 0 var(--space-2);
+    font-size: var(--text-xs);
+    font-weight: var(--weight-semibold);
+    letter-spacing: var(--tracking-wide);
+    color: var(--color-text-muted);
+}
+
+.ad-comment {
+    margin-bottom: var(--space-2);
+    padding: var(--space-3);
+    border-radius: var(--radius-md);
+    background: var(--color-surface);
+    box-shadow: var(--shadow-sm);
+}
+
+.ad-comment p {
+    margin: 0;
+    font-size: var(--text-sm);
+    line-height: var(--leading-normal);
+    color: var(--color-text);
+    white-space: pre-wrap;
+}
+
+.ad-comment-time {
+    display: block;
+    margin-top: var(--space-1);
+    font-size: var(--text-xs);
+    color: var(--color-text-muted);
+    text-align: right;
+}
+
+.ad-side-empty {
+    margin: var(--space-6) 0 0;
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+    line-height: var(--leading-normal);
+    text-align: center;
+}
+
+/* ngx-charts: no striped background behind the bars (its own rule is `.ngx-charts .grid-panel.odd rect`). */
+:host ::ng-deep .ad-chart .grid-panel.odd rect {
+    fill: transparent;
+}
+
+/* ngx-charts axis labels: same size as the rest of the small text. */
+:host ::ng-deep .ad-chart .tick text,
+:host ::ng-deep .ad-chart .textDataLabel {
+    font-size: 12px;
+    fill: var(--color-text-muted);
+}

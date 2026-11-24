@@ -1,0 +1,19 @@
+:host ::ng-deep .p-toast {
+    width: 22rem;
+    max-width: calc(100% - 2rem);
+}
+
+:host ::ng-deep .p-toast .p-toast-message .p-toast-message-content {
+    align-items: center;
+    padding: var(--space-3) var(--space-4);
+}
+
+:host ::ng-deep .p-toast .p-toast-message .p-toast-detail {
+    margin: 0;
+    font-size: var(--text-sm);
+    line-height: var(--leading-normal);
+}
+
+:host ::ng-deep .p-toast .p-toast-message .p-toast-message-icon {
+    font-size: 1.25rem;
+}

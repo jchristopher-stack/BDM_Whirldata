@@ -1,0 +1,190 @@
+/*
+ * Design tokens: the one source of truth for color, type, spacing, radius,
+ * shadow, motion and stacking in the therapist portal.
+ *
+ * - Components use these through var(--...). Don't add new hex values elsewhere.
+ * - Teal and yellow are the two brand colors. Teal is for actions and
+ *   navigation; yellow is for surfaces (side panels, highlighted areas, field
+ *   fills). Red, amber and green are status colors only.
+ * - The PrimeNG theme (assets/primeng-themes/taap.css) is generated against
+ *   these names by scripts/build-primeng-theme.js.
+ */
+:root {
+    /* ---------- Color scales ---------- */
+
+    /* Brand teal: the only accent. 500 is the brand color (4.6:1 on white). */
+    --teal-50: #EFF6F8;
+    --teal-100: #DAEAEF;
+    --teal-200: #B7D4DE;
+    --teal-300: #8CB9C8;
+    --teal-400: #5F9AAE;
+    --teal-500: #3F7D91;
+    --teal-600: #346A7C;
+    --teal-700: #2B5767;
+    --teal-800: #234652;
+    --teal-900: #1A3640;
+
+    /* Brand yellow: the second brand color. Surfaces only, never buttons or text. */
+    --yellow-25: #FFFDF7;
+    --yellow-50: #FDF5DE;
+    --yellow-100: #F7E6B5;
+
+    /* Neutrals: one cool family, tinted toward the teal. */
+    --neutral-0: #FFFFFF;
+    --neutral-25: #FAFCFC;
+    --neutral-50: #F4F7F8;
+    --neutral-100: #EAEFF1;
+    --neutral-200: #D8E0E3;
+    --neutral-300: #BCC8CC;
+    --neutral-400: #8F9EA4;
+    --neutral-500: #64737A;
+    --neutral-600: #4D5B61;
+    --neutral-700: #37454B;
+    --neutral-800: #243238;
+    --neutral-900: #15262D;
+
+    /* Status scales. Never used as an accent for ordinary actions. */
+    --red-50: #FBEDEB;
+    --red-100: #F3D0CB;
+    --red-500: #CC4A3D;
+    --red-600: #B23A2E;
+    --red-700: #962F25;
+    --red-800: #6E2219;
+
+    --amber-50: #FBF4E6;
+    --amber-100: #F3E1BE;
+    --amber-500: #C98A1E;
+    --amber-600: #A06A14;
+    --amber-700: #8A5A10;
+    --amber-800: #5E3D0B;
+
+    --green-50: #EAF5EE;
+    --green-100: #CDE7D6;
+    --green-500: #3E9A68;
+    --green-600: #2F7D52;
+    --green-700: #276F47;
+    --green-800: #1B4F32;
+
+    /* ---------- Semantic color ---------- */
+
+    --color-primary: var(--teal-500);
+    --color-primary-hover: var(--teal-600);
+    --color-primary-active: var(--teal-700);
+    --color-primary-subtle: var(--teal-50);
+    --color-primary-border: var(--teal-200);
+    --color-on-primary: var(--neutral-0);
+
+    --color-text: var(--neutral-900);
+    --color-text-muted: var(--neutral-500);
+    --color-text-subtle: var(--neutral-400);
+    --color-text-inverse: var(--neutral-0);
+
+    --color-ground: var(--neutral-25);
+    --color-surface: var(--neutral-0);
+    --color-surface-muted: var(--neutral-50);
+    --color-surface-hover: var(--neutral-100);
+    --color-surface-brand: var(--yellow-50);         /* side panels, highlighted areas */
+    --color-surface-brand-border: var(--yellow-100);
+    --color-field: var(--yellow-25);                 /* text field fill */
+    --color-border: var(--neutral-200);
+    --color-border-strong: var(--neutral-300);
+    --color-backdrop: rgba(21, 38, 45, 0.45);
+
+    --color-danger: var(--red-600);
+    --color-danger-hover: var(--red-700);
+    --color-danger-subtle: var(--red-50);
+    --color-danger-border: var(--red-100);
+
+    --color-warning: var(--amber-700);
+    --color-warning-subtle: var(--amber-50);
+    --color-warning-border: var(--amber-100);
+
+    --color-success: var(--green-700);
+    --color-success-subtle: var(--green-50);
+    --color-success-border: var(--green-100);
+
+    --color-info: var(--teal-700);
+    --color-info-subtle: var(--teal-50);
+
+    /* Data colors: charts and mood ratings only, never buttons or text. */
+    --chart-phq: #FD8430;
+    --chart-gad: #5AB3D1;
+    --mood-great: #9CD1E3;
+    --mood-good: #FEB583;
+    --mood-bad: #EE9680;
+
+    --focus-ring: 0 0 0 3px rgba(63, 125, 145, 0.35);
+
+    /* ---------- Typography ---------- */
+
+    --font-sans: 'Figtree', system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+    --text-xs: 0.75rem;     /* 12px: meta, badges */
+    --text-sm: 0.875rem;    /* 14px: body in dense UI, labels */
+    --text-md: 1rem;        /* 16px: body */
+    --text-lg: 1.25rem;     /* 20px: section titles */
+    --text-xl: 1.5rem;      /* 24px: page titles */
+    --text-2xl: 2rem;       /* 32px: display numbers */
+
+    --leading-tight: 1.25;
+    --leading-normal: 1.5;
+    --leading-relaxed: 1.65; /* long-form reading (privacy policy) */
+
+    --weight-regular: 400;
+    --weight-medium: 500;
+    --weight-semibold: 600;
+    --weight-bold: 700;
+
+    --tracking-tight: -0.01em;
+    --tracking-wide: 0.02em;
+
+    /* ---------- Spacing (4px base) ---------- */
+
+    --space-1: 0.25rem;
+    --space-2: 0.5rem;
+    --space-3: 0.75rem;
+    --space-4: 1rem;
+    --space-5: 1.25rem;
+    --space-6: 1.5rem;
+    --space-8: 2rem;
+    --space-10: 2.5rem;
+    --space-12: 3rem;
+
+    /* ---------- Radius: tighter inside, softer outside ---------- */
+
+    --radius-sm: 6px;       /* inputs, buttons, badges */
+    --radius-md: 10px;      /* cards, menus */
+    --radius-lg: 14px;      /* panels, dialogs */
+    --radius-full: 999px;   /* avatars, pills */
+
+    /* ---------- Shadow: tinted with neutral-900, light from above ---------- */
+
+    --shadow-sm: 0 1px 2px rgba(21, 38, 45, 0.06), 0 1px 3px rgba(21, 38, 45, 0.08);
+    --shadow-md: 0 4px 12px rgba(21, 38, 45, 0.10);
+    --shadow-lg: 0 16px 40px rgba(21, 38, 45, 0.18);
+
+    /* ---------- Motion ---------- */
+
+    --duration-fast: 150ms;
+    --duration-base: 200ms;
+    --ease-out: cubic-bezier(0.2, 0.7, 0.2, 1);
+
+    /* ---------- Stacking ----------
+       PrimeNG manages its own overlays from 1000 (menus) and 1100 (dialogs).
+       Material's CDK overlay sits above them so a datepicker or select opened
+       inside a PrimeNG dialog isn't hidden behind the dialog mask. */
+
+    --z-base: 0;
+    --z-sticky: 10;
+    --z-sidebar: 20;
+    --z-overlay: 1000;
+    --z-modal: 1100;
+    --z-popover: 1200;
+    --z-toast: 1300;
+    --z-loader: 1400;
+
+    /* ---------- Third-party bridges ---------- */
+
+    --bs-body-font-family: var(--font-sans);
+    --bs-body-color: var(--color-text);
+}

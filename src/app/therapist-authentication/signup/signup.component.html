@@ -1,0 +1,24 @@
+<app-auth-layout>
+    <p class="auth-step">Step 1 of 2</p>
+    <h1 class="heading-reset auth-title">Activate your account</h1>
+    <p class="auth-sub">Enter your email and the activation code from your invite email.</p>
+
+    <form class="auth-form" (ngSubmit)="signUpUser()" novalidate>
+        <div class="field">
+            <label class="field-label" for="signup-email">Email</label>
+            <input id="signup-email" name="email" pInputText type="email" autocomplete="email" [(ngModel)]="email" (ngModelChange)="form.clear('email')"
+                [class.p-invalid]="form.errors.email" [attr.aria-invalid]="form.errors.email ? true : null" [attr.aria-describedby]="form.errors.email ? 'signup-email-error' : null">
+            <div class="field-error" id="signup-email-error" *ngIf="form.errors.email">{{form.errors.email}}</div>
+        </div>
+        <div class="field">
+            <label class="field-label" for="signup-code">Activation code</label>
+            <input id="signup-code" name="activationCode" pInputText type="text" autocomplete="one-time-code" inputmode="numeric" maxlength="7" placeholder="123-456"
+                [(ngModel)]="activationCode" (keydown.backspace)="removeActivationCode()" (ngModelChange)="setActivationCode(); form.clear('activation_code')"
+                [class.p-invalid]="form.errors.activation_code" [attr.aria-invalid]="form.errors.activation_code ? true : null" [attr.aria-describedby]="form.errors.activation_code ? 'signup-code-error' : null">
+            <div class="field-error" id="signup-code-error" *ngIf="form.errors.activation_code">{{form.errors.activation_code}}</div>
+        </div>
+        <button pButton type="submit" class="auth-submit" label="Continue" icon="pi pi-arrow-right" iconPos="right"></button>
+    </form>
+
+    <div authFooter>Already activated? <a class="auth-link" routerLink="/sign-in">Sign in</a></div>
+</app-auth-layout>
